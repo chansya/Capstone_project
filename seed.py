@@ -30,16 +30,19 @@ def load_habits():
     """Load sample habits from data/sample_habits.csv into database."""
 
     for i, row in enumerate(open("data/sample_habits.csv")):
-        row_lst= row.rstrip().split("|")
+        row_lst = row.rstrip().split("|")
 
         user_id, habit_name,frequency,time_period,current_streak,max_streak=row_lst[:-2]
-        start_date=datetime.strptime(row_lst[-2], "%Y-%m-%d")
+        start_date = datetime.strptime(row_lst[-2], "%Y-%m-%d")
         # parse date if end_date is available, otherwise None
-        if row_lst[-1]!='null':
-            end_date=datetime.strptime(row_lst[-1], "%Y-%m-%d")
-        else:
-            end_date=None
-        habit = Habit.create(user_id, habit_name,frequency,time_period,current_streak,max_streak, start_date, end_date)
+        # if row_lst[-1]!='null':
+        #     end_date = datetime.strptime(row_lst[-1], "%Y-%m-%d")
+        # else:
+        #     end_date = None
+        habit = Habit.create(user_id, habit_name,
+                            frequency,time_period,
+                            current_streak,max_streak,
+                            start_date)
         db.session.add(habit)
 
     db.session.commit()
@@ -52,11 +55,11 @@ def load_records():
         return str == "True"
 
     for i, row in enumerate(open("data/sample_records.csv")):
-        row_lst= row.rstrip().split("|")
+        row_lst = row.rstrip().split("|")
 
         habit_id, finished, notes = row_lst[:-1]
 
-        record_date=datetime.strptime(row_lst[-1], "%Y-%m-%d")
+        record_date = datetime.strptime(row_lst[-1], "%Y-%m-%d")
 
         record = Record.create(habit_id, parse_boolean(finished), notes, record_date)
         db.session.add(record)

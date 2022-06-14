@@ -1,6 +1,72 @@
 {% extends 'base.html' %}
 {% block title %}My progress{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="static/css/style.css">
+{% endblock %}
 
 {% block body %}
-<h2>This is the progress page.</h2>
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Better</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-10">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              My profile
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="#">My habits</a></li>
+              <li><a class="dropdown-item" href="#">My badges</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+<p>Current Streak:</p>
+<p>Highest Streak:</p>
+<div>Calendar</div>
+<br>
+<br>
+<div>
+    <button id="add_habit">Add a habit</button>
+</div>
+<div>
+    <form action="/create_habit" method="POST" id="habit_form">
+        <div>
+            <label for="habit_name">Name</label>
+            <input type="text" name="habit_name" id="habit_name" required>
+        </div>
+        <div>
+            <label for="frequency">Frequency</label>
+            <input type="number" name="frequency" id="frequency" min="1" required> 
+            <span>Time(s)</span>
+            <select name="time_period" id="time_period" required>
+                <option value="per_day">Per Day</option>
+                <option value="per_week">Per Week</option>
+                <option value="per_month">Per Month</option>
+            </select>
+        </div>
+        <div>
+            <label for="start_date">Start Date</label>
+            <input type="date" name="start_date" id="start_date" required>
+
+            <!-- <label for="end_date">End Date (Optional)</label>
+            <input type="date" name="end_date" id="end_date"> -->
+        </div>
+        <button type="button" id="cancel_form">Cancel</button>
+        <button type="submit">Save</button>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block after_body %}
+<script src="/static/js/habit_form.js"></script>
 {% endblock %}

@@ -3,7 +3,7 @@
 from unicodedata import name
 from flask import Flask, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
-
+from datetime import datetime
 from jinja2 import StrictUndefined
 
 
@@ -22,7 +22,6 @@ def login():
     """View login page."""
     return render_template('login.html')
 
-
 @app.route("/verify_login",methods=["POST"])
 def verify_login():
     """Verify user's login credentials."""
@@ -38,9 +37,8 @@ def verify_login():
         # Log in user by storing the user's email in session
         session["user_email"] = user.email
         flash(f"Welcome back, {user.name}!")
-        return render_template("progress.html")
+        return redirect("/progress")
         
-
 @app.route("/signup")
 def signup():
     """View signup page."""
@@ -65,6 +63,34 @@ def create_account():
         flash("Account created! Please log in.")
         return redirect("/login")
 
+@app.route("/progress")
+def view_progress():
+    """View the progress page."""
+    return render_template("progress.html")
+
+@app.route("/create_habit", methods = ["POST"])
+def create_habit():
+    # get the input from form
+    habit_name = request.form.get("habit_name")
+    frequency = request.form.get("frequency")
+    time_period = request.form.get("time_period")
+    start_date  = datetime.strptime(
+                     request.form['start_date'],
+                     '%Y-%m-%d')
+    
+    current_streak = 0
+    max_streak = 0
+
+    user = User.get_by_email(session.get("user_email"))
+    
+    habit = Habit.create(user.user_id, habit_name,frequency,time_period,current_streak,max_streak, start_date)
+    db.session.add(habit)
+    db.session.commit()
+    flash("Habit created!")
+    # create new habit
+    habits = Habit.all_habits()
+    
+    return render_template("progress.html", habits = habits)
 
 if __name__ == "__main__":
     connect_to_db(app)
