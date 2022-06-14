@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<h2>Log in</h2>
+<form action="/verify_login" method="POST">
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email">
+    </div>
+
+    <div>
+        <label for="pw">Password:</label>
+        <input type="password" name="password" id="pw" maxlength="15">
+    </div>
+
+    <div>
+        <button>Log in</button>
+    </div>
+</form>
+
+{% endblock %}
