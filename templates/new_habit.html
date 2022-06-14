@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Create new habit{% endblock %}
+
+
+{% block body %}
+<h3>Create new habit</h3>
+    <div>
+    <form action="/create_habit" method="POST" id="habit_form">
+        <div>
+            <label for="habit_name">Name</label>
+            <input type="text" name="habit_name" id="habit_name" required>
+        </div>
+        <div>
+            <label for="frequency">Frequency</label>
+            <input type="number" name="frequency" id="frequency" min="1" required> 
+            <span>Time(s)</span>
+            <select name="time_period" id="time_period" required>
+                <option value="per day">Per Day</option>
+                <option value="per week">Per Week</option>
+                <option value="per month">Per Month</option>
+            </select>
+        </div>
+        <div>
+            <label for="start_date">Start Date</label>
+            <input type="date" name="start_date" id="start_date" required>
+
+            <!-- <label for="end_date">End Date (Optional)</label>
+            <input type="date" name="end_date" id="end_date"> -->
+        </div>
+        <button type="button" id="cancel_form">Cancel</button>
+        <button type="submit">Save</button>
+
+    </form>
+  </div>
+{% endblock %}

@@ -1,5 +1,5 @@
-1|Meditation|1|day|2|5|2022-01-01|null
-2|Exercise|2|week|1|2|2022-01-02|2022-12-31
-3|Reading|2|week|2|6|2022-01-03|2022-12-31
-4|Coding|1|day|5|10|2022-01-04|null
-5|Vaccumn|3|week|8|10|2022-01-05|null
+1|Meditation|1|per day|2|5|2022-01-01|null
+2|Exercise|2|per week|1|2|2022-01-02|2022-12-31
+3|Reading|2|per week|2|6|2022-01-03|2022-12-31
+4|Coding|1|per day|5|10|2022-01-04|null
+5|Vaccumn|3|per week|8|10|2022-01-05|null
