@@ -58,9 +58,6 @@ def create_account():
     if user:
         flash("Email already exists. Please log in.")
         return redirect("/signup")
-    elif password != confirm_pw:
-        flash("Passwords do not match. Please try again.")
-        return redirect("/signup")
     else:
         user = User.create(name, email, password)
         db.session.add(user)

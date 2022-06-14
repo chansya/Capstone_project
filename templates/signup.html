@@ -16,17 +16,21 @@
 
     <div>
         <label for="pw">Password:</label>
-        <input type="password" name="password" id="pw" maxlength="15" required>
+        <input type="password" name="password" id="pw" minlength="7" maxlength="15" required onChange="checkPassword()">
     </div>
 
     <div>
         <label for="confirm_pw">Confirm password:</label>
-        <input type="password" name="confirm_pw" id="confirm_pw" maxlength="15" required>
+        <input type="password" name="confirm_pw" id="confirm_pw" minlength="7" maxlength="15" required onChange="checkPassword()">
     </div>
 
     <div>
-        <button>Create account</button>
+        <button type="submit">Create account</button>
     </div>
 
 </form>
+{% endblock %}
+
+{% block after_body %}
+<script src="/static/js/confirm_pw.js"></script>
 {% endblock %}

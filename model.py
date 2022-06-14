@@ -52,8 +52,8 @@ class Habit(db.Model):
     habit_name = db.Column(db.String, nullable=False)
     frequency = db.Column(db.Integer, nullable= False)
     time_period = db.Column(db.String, nullable=False)
-    current_streak = db.Column(db.Integer, nullable=False)
-    max_streak = db.Column(db.Integer, nullable=False)
+    current_streak = db.Column(db.Integer, nullable=False, default=0)
+    max_streak = db.Column(db.Integer, nullable=False, default=0)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=True)
     
