@@ -3,7 +3,7 @@
 
 {% block body %}
 <h2>Log in</h2>
-<form action="/verify_login" method="POST">
+<form action="/process_login" method="POST">
     <div>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email">
@@ -18,5 +18,9 @@
         <button>Log in</button>
     </div>
 </form>
+
+<div>
+    <p>Not a user yet? <a href="/signup">Sign up here.</a></p>
+</div>
 
 {% endblock %}

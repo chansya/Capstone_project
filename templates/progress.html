@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}My progress{% endblock %}
 {% block head %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+
 <link rel="stylesheet" href="static/css/style.css">
 {% endblock %}
 
@@ -8,9 +11,9 @@
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">APP NAME</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
+      </button> -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-10">
           <li class="nav-item dropdown">
@@ -18,63 +21,86 @@
               {{ user.name}}'s profile
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">My Habits</a></li>
-              <li><a class="dropdown-item" href="#">My Badges</a></li>
+
+              <li><a class="dropdown-item" href="/create_habit">Add a habit</a></li>
+              <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
+              <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Log Out</a></li>
+              <li><a class="dropdown-item" href="/logout">Log Out</a></li>
             </ul>
           </li>
         </ul>
       </div>
     </div>
 </nav>
+
 <div class="container">
   <div class="row">
     <div class="col-md-5">
       <h4>PROGRESS</h4>
       
-      <div>Calendar</div>
+      <div id='calendar'></div>
     </div>
     
     <div class="col-md-5" id="habit_list">
-      <h4>RECORD</h4>
-      {% for habit in habits %}
-      <p>{{ habit.habit_name }}</p>
-      <p>Current streak: {{ habit.current_streak}}</p>
-      <p>Longest streak: {{ habit.max_streak}}</p>
-      <span>{{ habit.frequency}} {{ habit.time_period }}</span>
-      <button>Done!</button>
-      {% endfor %}
+      <button id="show_form">Add a habit</button>
+      <div>
+        <form action="/create_habit" method="POST" id="habit_form">
+            <div>
+                <label for="habit_name">Name</label>
+                <input type="text" name="habit_name" id="habit_name" required>
+            </div>
+            <div>
+                <label for="frequency">Frequency</label>
+                <input type="number" name="frequency" id="frequency" min="1" required> 
+                <span>Time(s)</span>
+                <select name="time_period" id="time_period" required>
+                    <option value="per day">Per Day</option>
+                    <option value="per week">Per Week</option>
+                    <option value="per month">Per Month</option>
+                </select>
+            </div>
+            <div>
+                <label for="start_date">Start Date</label>
+                <input type="date" name="start_date" id="start_date" required>
+    
+            </div>
+            <button type="button" id="cancel_form">Cancel</button>
+            <button type="submit" id="save_form">Save</button>
+    
+        </form>
+      </div>
+      <hr>
+      <h4>My Habits</h4>
+      {% if habits %}
+        {% for habit in habits %}
+          <p>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</p>
+          <p>Current streak: {{ habit.current_streak}}</p>
+          <p>Longest streak: {{ habit.max_streak}}</p>
+          <hr>
+        {% endfor %}
+
+      {% else %}
+        <p id="new_habit_prompt">Uh-oh there's no habit yet.
+        </p>
+      {% endif %}
     </div>
     
     <div class="col-md-2">
-        <button id="show_form">Add a habit</button>
-        <div>
-          <form action="/create_habit" method="POST" id="habit_form">
-              <div>
-                  <label for="habit_name">Name</label>
-                  <input type="text" name="habit_name" id="habit_name" required>
-              </div>
-              <div>
-                  <label for="frequency">Frequency</label>
-                  <input type="number" name="frequency" id="frequency" min="1" required> 
-                  <span>Time(s)</span>
-                  <select name="time_period" id="time_period" required>
-                      <option value="per day">Per Day</option>
-                      <option value="per week">Per Week</option>
-                      <option value="per month">Per Month</option>
-                  </select>
-              </div>
-              <div>
-                  <label for="start_date">Start Date</label>
-                  <input type="date" name="start_date" id="start_date" required>
-      
-              </div>
-              <button type="button" id="cancel_form">Cancel</button>
-              <button type="submit" id="save_form">Save</button>
-      
-          </form>
-        </div>
+        <form action="/create_record">
+          <label for="habit_done">Select habit to record:</label>
+          <select name="habit_done" id="habit_done" required>
+            {% for habit in habits %}
+            <option value="{{habit.habit_name}}">{{habit.habit_name}}</option>
+            {% endfor %}
+          </select>
+          <input type="hidden" name="finished" value="True">
+          <label for="notes">Notes to self:</label>
+          <textarea name="notes" id="notes" cols="20" rows="5"></textarea>
+          <label for="record_date">Record date:</label>
+          <input type="date" name="record_date" id="record_date" required>
+          <button>Save</button>
+        </form>
     </div>
   </div>
 
