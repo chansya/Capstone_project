@@ -100,7 +100,8 @@ def create_habit():
     flash("Habit created!")
    
     # put information to send back as response in dictionary to jsonify
-    habit_to_send = {"habit_name": habit.habit_name,
+    habit_to_send = {"habit_id": habit.habit_id,
+         "habit_name": habit.habit_name,
          "current_streak": habit.current_streak,
          "max_streak": habit.max_streak,
          "frequency": habit.frequency,
@@ -121,7 +122,7 @@ def create_record():
     record_date  = datetime.strptime(
                      request.json.get("record_date"),
                      '%Y-%m-%d')
-
+    finished = True
     # create new record object
     record = Record.create(habit_id, finished, notes, record_date)
     db.session.add(record)
@@ -129,9 +130,18 @@ def create_record():
     flash("Record saved!")
 
     # add current streak by 1 and update max streak if needed 
+    habit = Habit.get_by_id(habit_id)
+    Habit.update_curr_streak(habit_id)
+    Habit.update_max_streak(habit_id)
+    db.session.commit()
 
-    return {"success": True,
-            "status": f"Record has been added."}
+     # put information to send back as response in dictionary to jsonify
+    record_to_send = {"habit_id": habit.habit_id,
+         "record_id": record.record_id,
+         "current_streak": habit.current_streak,
+         "max_streak": habit.max_streak,
+        }
+    return jsonify(record_to_send)
 
 @app.route("/logout")
 def process_logout():

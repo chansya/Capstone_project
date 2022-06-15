@@ -37,7 +37,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-5">
-      <h4>PROGRESS</h4>
+      <h4>Progress</h4>
       
       <div id='calendar'></div>
     </div>
@@ -75,8 +75,8 @@
       {% if habits %}
         {% for habit in habits %}
           <p>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</p>
-          <p>Current streak: {{ habit.current_streak}}</p>
-          <p>Longest streak: {{ habit.max_streak}}</p>
+          <p id="curr_for_{{ habit.habit_id }}">Current streak: {{ habit.current_streak}}</p>
+          <p id="max_for_{{ habit.habit_id }}">Longest streak: {{ habit.max_streak}}</p>
           <hr>
         {% endfor %}
 
@@ -87,11 +87,11 @@
     </div>
     
     <div class="col-md-2">
-        <form action="/create_record">
+        <form action="/create_record" id="record_form">
           <label for="habit_done">Select habit to record:</label>
           <select name="habit_done" id="habit_done" required>
             {% for habit in habits %}
-            <option value="{{habit.habit_name}}">{{habit.habit_name}}</option>
+            <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
             {% endfor %}
           </select>
           <input type="hidden" name="finished" value="True">

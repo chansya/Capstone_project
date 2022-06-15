@@ -91,6 +91,19 @@ class Habit(db.Model):
     def all_habits(cls):
         return cls.query.all()
 
+    @classmethod
+    def update_curr_streak(cls, habit_id):
+        """ Increment current streak  by one when user creates a record."""
+        habit = cls.query.get(habit_id)
+        habit.current_streak = habit.current_streak + 1
+
+    @classmethod
+    def update_max_streak(cls, habit_id):
+        """ Update the highest streak. """
+        habit = cls.query.get(habit_id)
+        if habit.current_streak > habit.max_streak:
+            habit.max_streak = habit.current_streak
+
 
 class Record(db.Model):
     """A record for a habit."""

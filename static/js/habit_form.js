@@ -23,7 +23,7 @@ habitForm.addEventListener('submit',(evt)=>{
         time_period : document.querySelector('#time_period').value,
         start_date : document.querySelector('#start_date').value
     }
-
+    // send AJAX post request to add new record to database
     fetch('/create_habit', {
         method: 'POST',
         body: JSON.stringify(formInput),
@@ -35,48 +35,51 @@ habitForm.addEventListener('submit',(evt)=>{
         .then(habitData=>{
             let prompt = document.querySelector('#new_habit_prompt');
             if(prompt){prompt.remove();}
-           
+        
+            // add new habit under My habits
             document.querySelector('#habit_list').insertAdjacentHTML('beforeend', 
             `<p>${habitData.habit_name} (${habitData.frequency} times ${habitData.time_period})</p>
-            <p>Current streak: ${habitData.current_streak}</p>
-            <p>Longest streak: ${habitData.max_streak}</p>
+            <p id="curr_for_${habitData.habit_id}">Current streak: ${habitData.current_streak}</p>
+            <p id="max_for_${habitData.habit_id}">Longest streak: ${habitData.max_streak}</p>
             <hr>`);
 
+            // add new habit in the select menu for record
             document.querySelector('#habit_done').insertAdjacentHTML('beforeend',
-            `<option value="${habitData.habit_name}">${habitData.habit_name}</option>`
+            `<option value="${habitData.habit_id}">${habitData.habit_name}</option>`
             )
         })
 })
 
 
-// select the list forms
-// const recordForms = document.querySelectorAll('.record_form');
 
-// for(const recordForm of recordForms){
-//     recordForm.addEventListener('submit',(evt)=>{
-//         const form = evt.target;
-//         evt.preventDefault();
+const recordForm = document.querySelector('#record_form');
 
-//         const formInput = {
-//             habit_id : form.id,
-//             finished : document.querySelector('#finished').value,
-//             notes : document.querySelector('#notes').value,
-//             record_date : document.querySelector('#record_date').value
-//         }
-    
-//         fetch('/create_record', {
-//             method: 'POST',
-//             body: JSON.stringify(formInput),
-//             headers:{
-//                 'Content-Type' : 'application/json',
-//             },
-//         })
-//             .then(response => response.json())
-//             .then(responseJson=>{
-//                 alert(responseJson.status);
-//             })
-//     })
-// }
+
+recordForm.addEventListener('submit', (evt)=>{
+    evt.preventDefault();
+
+    const formInput = {
+        habit_id : document.querySelector('#habit_done').value,
+        notes : document.querySelector('#notes').value,
+        record_date : document.querySelector('#record_date').value
+    }
+
+    fetch('/create_record', {
+        method: 'POST',
+        body: JSON.stringify(formInput),
+        headers:{
+            'Content-Type' : 'application/json',
+        },
+    })
+        .then(response => response.json())
+        .then(recordData=>{
+            document.querySelector(`#curr_for_${recordData.habit_id}`)
+                .innerHTML=`Current streak: ${recordData.current_streak}`;
+            document.querySelector(`#max_for_${recordData.habit_id}`)
+            .innerHTML=`Longest streak: ${recordData.max_streak}`
+
+        })
+})
 
 
 // for rendering calendar
