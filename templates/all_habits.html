@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}My habits{% endblock %}
+
+
+{% block body %}
+<h2>All habits</h2>
+{% if habits %}
+    <ul>
+        {% for habit in habits %}
+            <li>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</li>
+            <a href="/{{habit.habit_id}}/records">Check activity log</a>
+            <a href="/{{habit.habit_id}}/remove_habit">Remove habit</a>
+            <hr>
+        {% endfor %}
+    </ul>
+
+{% else %}
+<p id="new_habit_prompt">Uh-oh there's no habit yet. <a href="/progress">Make one here.</a>
+</p>
+{% endif %}
+{% endblock %}

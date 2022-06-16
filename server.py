@@ -1,7 +1,9 @@
 
 # from pydoc import render_doc
+from asyncio import events
+from tarfile import RECORDSIZE
 from unicodedata import name
-from flask import Flask, jsonify, render_template, request, flash, session, redirect
+from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime
 from jinja2 import StrictUndefined
@@ -10,6 +12,9 @@ from jinja2 import StrictUndefined
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
+
+events = []
+
 
 @app.route("/")
 def index():
@@ -26,7 +31,8 @@ def login():
     """View login page."""
     return render_template('login.html')
 
-@app.route("/process_login",methods=["POST"])
+
+@app.route("/process_login", methods=["POST"])
 def process_login():
     """Verify user's login credentials."""
 
@@ -42,11 +48,13 @@ def process_login():
         session["user_email"] = user.email
         flash(f"Welcome, {user.name}!")
         return redirect("/progress")
-        
+
+
 @app.route("/signup")
 def signup():
     """View signup page."""
     return render_template('signup.html')
+
 
 @app.route("/create_account", methods=["POST"])
 def create_account():
@@ -54,7 +62,7 @@ def create_account():
     name = request.form.get("name")
     email = request.form.get("email")
     password = request.form.get("password")
-    
+
     user = User.get_by_email(email)
     if user:
         flash("Email already exists. Please log in.")
@@ -67,47 +75,49 @@ def create_account():
         flash(f"Account created. Welcome, {user.name}!")
         return redirect("/progress")
 
+
 @app.route("/progress")
 def view_progress():
     """View the progress page."""
     user = User.get_by_email(session["user_email"])
     if user:
         habits = Habit.get_by_user(user.user_id)
-        return render_template("progress.html", user=user, habits=habits)
-    else: 
+        return render_template("progress.html", user=user, habits=habits, events=events)
+    else:
         return redirect('/')
 
 
-@app.route("/create_habit", methods = ["POST"])
+@app.route("/create_habit", methods=["POST"])
 def create_habit():
     """Create new habit object and add into database."""
-    
+
     # extract the user input from the request
     habit_name = request.json.get("habit_name")
     frequency = request.json.get("frequency")
     time_period = request.json.get("time_period")
-    start_date  = datetime.strptime(
-                     request.json.get("start_date"),
-                     '%Y-%m-%d')
+    start_date = datetime.strptime(
+        request.json.get("start_date"),
+        '%Y-%m-%d')
     current_streak = 0
     max_streak = 0
-    
     user = User.get_by_email(session.get("user_email"))
+
     # create new habit object in database
-    habit = Habit.create(user.user_id, habit_name,frequency,time_period,current_streak,max_streak, start_date)
+    habit = Habit.create(user.user_id, habit_name, frequency,
+                         time_period, current_streak, max_streak, start_date)
     db.session.add(habit)
     db.session.commit()
     flash("Habit created!")
-   
-    # put information to send back as response in dictionary to jsonify
+
+    # put information in dictionary to send back as json response
     habit_to_send = {"habit_id": habit.habit_id,
-         "habit_name": habit.habit_name,
-         "current_streak": habit.current_streak,
-         "max_streak": habit.max_streak,
-         "frequency": habit.frequency,
-         "time_period": habit.time_period,
-         "start_date": habit.start_date,
-        }
+                     "habit_name": habit.habit_name,
+                     "current_streak": habit.current_streak,
+                     "max_streak": habit.max_streak,
+                     "frequency": habit.frequency,
+                     "time_period": habit.time_period,
+                     "start_date": habit.start_date,
+                     }
     return jsonify(habit_to_send)
 
 
@@ -119,29 +129,60 @@ def create_record():
     habit_id = request.json.get("habit_id")
     finished = request.json.get("finished")
     notes = request.json.get("notes")
-    record_date  = datetime.strptime(
-                     request.json.get("record_date"),
-                     '%Y-%m-%d')
+    record_date = datetime.strptime(
+        request.json.get("record_date"),
+        '%Y-%m-%d')
     finished = True
+
     # create new record object
     record = Record.create(habit_id, finished, notes, record_date)
     db.session.add(record)
     db.session.commit()
     flash("Record saved!")
 
-    # add current streak by 1 and update max streak if needed 
+    # add current streak by 1 and update max streak if needed
     habit = Habit.get_by_id(habit_id)
     Habit.update_curr_streak(habit_id)
     Habit.update_max_streak(habit_id)
     db.session.commit()
 
-     # put information to send back as response in dictionary to jsonify
+    # add the record to events list
+    events.append({
+        'title': habit.habit_name,
+        'start': record.record_date,
+    })
+    
+    # put information to send back as response in dictionary to jsonify
     record_to_send = {"habit_id": habit.habit_id,
-         "record_id": record.record_id,
-         "current_streak": habit.current_streak,
-         "max_streak": habit.max_streak,
-        }
+                      "record_id": record.record_id,
+                      "current_streak": habit.current_streak,
+                      "max_streak": habit.max_streak,
+                      }
     return jsonify(record_to_send)
+
+
+@app.route("/all_habits")
+def view_habits():
+    user = User.get_by_email(session.get("user_email"))
+    habits = Habit.get_by_user(user.user_id)
+    return render_template("all_habits.html", habits=habits)
+
+
+@app.route("/<habit_id>/remove_habit")
+def remove_habit(habit_id):
+    Record.query.filter_by(habit_id=habit_id).delete()
+    habit = Habit.get_by_id(habit_id)
+    db.session.delete(habit)
+    db.session.commit()
+
+    return redirect('/all_habits')
+
+@app.route("/<habit_id>/records")
+def view_records(habit_id):
+    """View all records for a habit"""
+    habit = Habit.get_by_id(habit_id)
+    records = Record.get_by_habit(habit_id)
+    return render_template("all_records.html", habit=habit, records=records)
 
 @app.route("/logout")
 def process_logout():

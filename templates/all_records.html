@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}My records{% endblock %}
+
+
+{% block body %}
+<h2>All records for {{ habit.habit_name }}</h2>
+{% if records %}
+    <ul>
+        {% for record in records %}
+            <li>
+                Record Date: {{ record.record_date }}
+                <p>Notes: {{ record.notes }}</p>
+            </li>
+            <a href="/{{record.record_id}}/edit_record">Edit</a>
+            <a href="/{{record.record_id}}/remove_record">Remove</a>
+            <hr>
+        {% endfor %}
+    </ul>
+
+{% else %}
+<p id="new_record_prompt">Uh-oh there's no record for this habit yet. <a href="/progress">Make one here.</a>
+</p>
+{% endif %}
+{% endblock %}

@@ -2,6 +2,7 @@ const newHabitBtn = document.querySelector('#show_form');
 const habitForm = document.querySelector('#habit_form');
 const cancelBtn = document.querySelector('#cancel_form');
 const saveBtn = document.querySelector('#save_form');
+const recordForm = document.querySelector('#record_form');
 
 // display the new habit form when user clicks on "Add a habit" btn
 newHabitBtn.addEventListener('click', ()=>{
@@ -50,11 +51,7 @@ habitForm.addEventListener('submit',(evt)=>{
         })
 })
 
-
-
-const recordForm = document.querySelector('#record_form');
-
-
+// send AJAX post request when user submits the new record aform
 recordForm.addEventListener('submit', (evt)=>{
     evt.preventDefault();
 
@@ -83,10 +80,17 @@ recordForm.addEventListener('submit', (evt)=>{
 
 
 // for rendering calendar
-document.addEventListener('DOMContentLoaded', function() {
-    let calendarEl = document.getElementById('calendar');
-    let calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth'
-    });
-    calendar.render();
-  });
+// document.addEventListener('DOMContentLoaded', function() {
+//     let calendarEl = document.getElementById('calendar');
+//     let calendar = new FullCalendar.Calendar(calendarEl, {
+//       initialView: 'dayGridMonth',
+//       events: [
+//         {
+//             title: 'Name of event',
+//             start: '2022-06-15'
+//         },
+//     ]
+//     });
+    
+//     calendar.render();
+//   });

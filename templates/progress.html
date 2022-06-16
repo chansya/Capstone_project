@@ -21,8 +21,6 @@
               {{ user.name}}'s profile
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-              <li><a class="dropdown-item" href="/create_habit">Add a habit</a></li>
               <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
               <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -86,7 +84,7 @@
       {% endif %}
     </div>
     
-    <div class="col-md-2">
+    <div class="col-md-2" id="record_section">
         <form action="/create_record" id="record_form">
           <label for="habit_done">Select habit to record:</label>
           <select name="habit_done" id="habit_done" required>
@@ -107,9 +105,27 @@
 </div>
 
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let calendarEl = document.getElementById('calendar');
+  let calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    events: [
+      {% for event in events %}
+      {
+        title: '{{ event.title }}',
+        start: '{{ event.start }}'
+      },
+      {% endfor %}    
 
+    ],
+  });
+  calendar.render();
+});
+</script>
 {% endblock %}
 
 {% block after_body %}
-<script src="/static/js/habit_form.js"></script>
+<script src="/static/js/progress_page.js"></script>
+
 {% endblock %}
