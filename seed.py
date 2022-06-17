@@ -1,5 +1,6 @@
 """Script to seed sample database."""
 
+from email import message
 import os
 from datetime import datetime
 from model import User, Habit, Record, Badge, connect_to_db, db
@@ -17,7 +18,7 @@ db.create_all()
 def load_users():
     """Load sample users from data/sample_users.csv into database."""
 
-    for i, row in enumerate(open("data/sample_users.csv")):
+    for row in open("data/sample_users.csv"):
         name, email, password = row.rstrip().split("|")
 
         user = User.create(name, email, password)
@@ -29,7 +30,7 @@ def load_users():
 def load_habits():
     """Load sample habits from data/sample_habits.csv into database."""
 
-    for i, row in enumerate(open("data/sample_habits.csv")):
+    for row in open("data/sample_habits.csv"):
         row_lst = row.rstrip().split("|")
 
         user_id, habit_name,frequency,time_period,current_streak,max_streak=row_lst[:-2]
@@ -54,7 +55,7 @@ def load_records():
     def parse_boolean(str):
         return str == "True"
 
-    for i, row in enumerate(open("data/sample_records.csv")):
+    for row in open("data/sample_records.csv"):
         row_lst = row.rstrip().split("|")
 
         habit_id, finished, notes = row_lst[:-1]
@@ -70,11 +71,11 @@ def load_records():
 def load_badges():
     """Load sample badges from data/sample_badges.csv into database."""
 
-    for i, row in enumerate(open("data/sample_badges.csv")):
+    for row in open("data/sample_badges.csv"):
         row = row.rstrip()
-        user_id, img_url = row.split("|")
+        user_id, img_url, message = row.split("|")
 
-        badge = Badge.create(user_id, img_url)
+        badge = Badge.create(user_id, img_url, message)
         db.session.add(badge)
 
     db.session.commit()

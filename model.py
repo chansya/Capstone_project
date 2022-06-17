@@ -1,6 +1,7 @@
 """ Models for habit building app. """
 
 from datetime import datetime
+from email import message
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -32,14 +33,17 @@ class User(db.Model):
 
     @classmethod
     def get_by_id(cls, user_id):
+        """Return a specific user object."""
         return cls.query.get(user_id)
 
     @classmethod
     def get_by_email(cls, email):
+        """Return a user object with specific email."""
         return cls.query.filter(User.email == email).first()
 
     @classmethod
     def all_users(cls):
+        """Return list of all users."""
         return cls.query.all()
 
 
@@ -58,7 +62,6 @@ class Habit(db.Model):
     start_date = db.Column(db.Date, nullable=False)
     # end_date = db.Column(db.Date, nullable=True)
 
-    # user_id, habit_name,frequency,time_period,current_streak,max_streak
     # The user to which a habit belongs
     user = db.relationship("User", back_populates="habits")
     # A ist of records for this habit
@@ -68,7 +71,8 @@ class Habit(db.Model):
         return f"<Habit habit_id={self.habit_id} habit_name={self.habit_name}>"
 
     @classmethod
-    def create(cls, user_id, habit_name, frequency, time_period, current_streak, max_streak, start_date):
+    def create(cls, user_id, habit_name, frequency, time_period,
+                 current_streak, max_streak, start_date):
         """Create and return a new habit."""
 
         return cls(user_id=user_id,
@@ -82,19 +86,22 @@ class Habit(db.Model):
 
     @classmethod
     def get_by_id(cls, habit_id):
+        """Return a single habit object."""
         return cls.query.get(habit_id)
 
     @classmethod
     def get_by_user(cls, user_id):
+        """Return list of all habits for a specific user."""
         return cls.query.filter(Habit.user_id == user_id).all()
 
     @classmethod
     def all_habits(cls):
+        """Return list of all habits."""
         return cls.query.all()
 
     @classmethod
     def update_curr_streak(cls, habit_id):
-        """ Increment current streak  by one when user creates a record."""
+        """ Increment current streak by one when user creates a record."""
         habit = cls.query.get(habit_id)
         habit.current_streak = habit.current_streak + 1
 
@@ -104,6 +111,11 @@ class Habit(db.Model):
         habit = cls.query.get(habit_id)
         if habit.current_streak > habit.max_streak:
             habit.max_streak = habit.current_streak
+
+    @classmethod
+    def count_habit_by_user(cls, user_id):
+        """Return the count of habits for a specific user."""
+        return cls.query.filter(Habit.user_id == user_id).count()
 
 
 class Record(db.Model):
@@ -126,20 +138,28 @@ class Record(db.Model):
     @classmethod
     def create(cls, habit_id, finished, notes, record_date):
         """Create and return a new record."""
-
-        return cls(habit_id=habit_id, finished=finished, notes=notes, record_date=record_date)
+        return cls(habit_id=habit_id, finished=finished, 
+                    notes=notes, record_date=record_date)
 
     @classmethod
     def get_by_id(cls, record_id):
+        """ Return a single record object. """
         return cls.query.get(record_id)
 
     @classmethod
     def get_by_habit(cls, habit_id):
+        """ Rreturn list of records for a specific habit. """
         return cls.query.filter(Record.habit_id == habit_id).all()
 
     @classmethod
     def all_records(cls):
+        """ Return all records for all habits. """
         return cls.query.all()
+
+    @classmethod
+    def count_records_by_habit(cls, habit_id):
+        """ Return the count of records for a specific habit."""
+        return cls.query.filter(Record.habit_id==habit_id).count()
 
 
 class Badge(db.Model):
@@ -150,6 +170,7 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     img_url = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
 
     # The user to which a badge belongs
     user = db.relationship("User", back_populates="badges")
@@ -158,21 +179,23 @@ class Badge(db.Model):
         return f"<Badge badge_id={self.badge_id} img_url={self.img_url}>"
 
     @classmethod
-    def create(cls, user_id, img_url):
-        """Create and return a new badge."""
-
-        return cls(user_id=user_id, img_url=img_url)
+    def create(cls, user_id, img_url, message):
+        """Create and return a new badge object."""
+        return cls(user_id=user_id, img_url=img_url, message=message)
 
     @classmethod
     def get_by_id(cls, badge_id):
+        """Return a single badge object."""
         return cls.query.get(badge_id)
 
     @classmethod
     def get_by_user(cls, user_id):
+        """Return a list of badge object for a specific user."""
         return cls.query.filter(Badge.user_id == user_id).all()
 
     @classmethod
     def all_badges(cls):
+        """ Return all badge objects."""
         return cls.query.all()
 
 

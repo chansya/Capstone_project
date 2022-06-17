@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}My badges{% endblock %}
+
+
+{% block body %}
+<h2>My achievements</h2>
+<a href="/progress">Back to main page</a>
+{% if badges %}
+    <ul>
+        {% for badge in badges %}
+            <li>
+                <img src="{{badge.img_url}}" alt="badge">
+                <p>{{ badge.message }}</p>
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+
+{% else %}
+<p id="new_habit_prompt">Uh-oh you haven't earned any badges yet. <a href="/progress">Get one here.</a>
+</p>
+{% endif %}
+{% endblock %}

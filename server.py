@@ -1,19 +1,21 @@
 
-# from pydoc import render_doc
-from asyncio import events
-from tarfile import RECORDSIZE
-from unicodedata import name
 from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime
+import os
+import requests
 from jinja2 import StrictUndefined
 
-
 app = Flask(__name__)
-app.secret_key = "dev"
+app.secret_key= os.environ['secret_key']
+
 app.jinja_env.undefined = StrictUndefined
 
-events = []
+API_KEY = os.environ['FLATICON_KEY']
+
+# if session.get("user_email"):
+#     user = User.get_by_email(session["user_email"])
+#     habits = Habit.get_by_user(user.user_id)
 
 
 @app.route("/")
@@ -73,6 +75,12 @@ def create_account():
         db.session.commit()
         session["user_email"] = user.email
         flash(f"Account created. Welcome, {user.name}!")
+        
+        # Create badge 1 for sign up
+        badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome")
+        db.session.add(badge1)
+        db.session.commit()
+        flash("You've earned a badge! You can see it under your profile.")
         return redirect("/progress")
 
 
@@ -82,9 +90,28 @@ def view_progress():
     user = User.get_by_email(session["user_email"])
     if user:
         habits = Habit.get_by_user(user.user_id)
-        return render_template("progress.html", user=user, habits=habits, events=events)
+        return render_template("progress.html", user=user, habits=habits)
     else:
         return redirect('/')
+
+
+@app.route("/calendar")
+def view_calendar():
+    """View the calendar page."""
+    # get list of habit for user
+    user = User.get_by_email(session.get("user_email"))
+    habits = Habit.get_by_user(user.user_id)
+
+    # loop over habit list to generate record list
+    record_lst = []
+    for habit in habits:
+        records = Record.get_by_habit(habit.habit_id)
+        record_lst += records
+
+    events = [{'title': f"{record.habit.habit_name.capitalize()}",
+                'start': f"{record.record_date}"} for record in record_lst]
+    
+    return render_template("calendar.html", events=events)
 
 
 @app.route("/create_habit", methods=["POST"])
@@ -92,7 +119,7 @@ def create_habit():
     """Create new habit object and add into database."""
 
     # extract the user input from the request
-    habit_name = request.json.get("habit_name")
+    habit_name = request.json.get("habit_name").capitalize()
     frequency = request.json.get("frequency")
     time_period = request.json.get("time_period")
     start_date = datetime.strptime(
@@ -108,6 +135,22 @@ def create_habit():
     db.session.add(habit)
     db.session.commit()
     flash("Habit created!")
+
+    # reward badges for creating first habit
+    
+    if Habit.count_habit_by_user(user.user_id) == 1:
+        # create badge 1 for sign up
+        badge2 = Badge.create(user.user_id, "static/img/2.png", "First Goal")
+        db.session.add(badge2)
+        db.session.commit()
+        flash("You've created your first habit and earned a badge!")
+
+    if Habit.count_habit_by_user(user.user_id) == 3:
+        # create badge 1 for sign up
+        badge4 = Badge.create(user.user_id, "static/img/4.png", "Multi-tasker")
+        db.session.add(badge4)
+        db.session.commit()
+        flash("You've created your three habits and earned a badge!")
 
     # put information in dictionary to send back as json response
     habit_to_send = {"habit_id": habit.habit_id,
@@ -125,7 +168,7 @@ def create_habit():
 def create_record():
     """Create new record object and add into database."""
 
-    # extract the input from the request
+    # Extract the input from the request
     habit_id = request.json.get("habit_id")
     finished = request.json.get("finished")
     notes = request.json.get("notes")
@@ -134,24 +177,39 @@ def create_record():
         '%Y-%m-%d')
     finished = True
 
-    # create new record object
+    # Create new record object
     record = Record.create(habit_id, finished, notes, record_date)
     db.session.add(record)
     db.session.commit()
     flash("Record saved!")
 
-    # add current streak by 1 and update max streak if needed
+    # Add current streak by 1 and update max streak if needed
     habit = Habit.get_by_id(habit_id)
     Habit.update_curr_streak(habit_id)
     Habit.update_max_streak(habit_id)
     db.session.commit()
 
-    # add the record to events list
-    events.append({
-        'title': habit.habit_name,
-        'start': record.record_date,
-    })
+    # Create badges according to number of records
+    user = User.get_by_email(session["user_email"])
+    habits = Habit.get_by_user(user.user_id)
+    record_count = 0
+    for habit in habits:
+        record_count +=  Record.count_records_by_habit(habit.habit_id)
     
+    if record_count == 1:
+        badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1")
+        db.session.add(badge3)
+        db.session.commit()
+        flash("You've created your first record and earned a badge!")
+
+    if record_count == 5:
+        badge5 = Badge.create(user.user_id, "static/img/5.png", "5-Star Records")
+        db.session.add(badge5)
+        db.session.commit()
+        flash("You've created your 5 records and earned a badge!")
+
+
+
     # put information to send back as response in dictionary to jsonify
     record_to_send = {"habit_id": habit.habit_id,
                       "record_id": record.record_id,
@@ -177,12 +235,30 @@ def remove_habit(habit_id):
 
     return redirect('/all_habits')
 
+
 @app.route("/<habit_id>/records")
 def view_records(habit_id):
     """View all records for a habit"""
     habit = Habit.get_by_id(habit_id)
     records = Record.get_by_habit(habit_id)
     return render_template("all_records.html", habit=habit, records=records)
+
+
+@app.route("/<record_id>/remove_record")
+def remove_record(record_id):
+    record = Record.get_by_id(record_id)
+    db.session.delete(record)
+    db.session.commit()
+
+    return redirect(f"/{record_id}/records")
+
+
+@app.route("/all_badges")
+def view_badges():
+    user = User.get_by_email(session.get("user_email"))
+    badges = Badge.get_by_user(user.user_id)
+    return render_template("all_badges.html", badges=badges)
+
 
 @app.route("/logout")
 def process_logout():
