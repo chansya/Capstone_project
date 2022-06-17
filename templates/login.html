@@ -2,25 +2,59 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<h2>Log in</h2>
-<form action="/process_login" method="POST">
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email">
-    </div>
 
-    <div>
-        <label for="pw">Password:</label>
-        <input type="password" name="password" id="pw" maxlength="15">
-    </div>
 
-    <div>
-        <button>Log in</button>
-    </div>
-</form>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a href="#" class="navbar-brand">STICK</a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/" class="nav-item nav-link active">Home</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="/login" class="nav-item nav-link">Log in</a>
+                <a href="/signup" class="nav-item nav-link">Sign up</a>
 
-<div>
-    <p>Not a user yet? <a href="/signup">Sign up here.</a></p>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-6 offset-6">
+            <h4>Log in</h4>
+            <form action="/process_login" method="POST">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" name="email" id="email" class="form-control">
+                </div>
+            
+                <div class="mb-3">
+                    <label for="pw" class="form-label">Password:</label>
+                    <input type="password" name="password" id="pw" maxlength="15" class="form-control">
+                </div>
+            
+                <div class="mb-3">
+                    <button class="btn btn-secondary">Log in</button>
+                </div>
+            </form>
+        
+            <div class="mb-3">
+                <p>Not a user yet? <a href="/signup">Sign up here.</a></p>
+            </div>
+
+        </div>
+        
+
+    </div>
+    
 </div>
+
 
 {% endblock %}

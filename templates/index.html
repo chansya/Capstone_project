@@ -2,17 +2,31 @@
 {% block title %}Welcome{% endblock %}
 
 {% block body %}
-<h1>Welcome to habit building app!</h1>
 
-<div>
-    <button>
-        <a href="/login">Log in</a>
-    </button>
+
+<div class="m-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand">STICK</a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav">
+                    <a href="/" class="nav-item nav-link active">Home</a>
+                </div>
+                <div class="navbar-nav ms-auto">
+                    <a href="/login" class="nav-item nav-link">Log in</a>
+                    <a href="/signup" class="nav-item nav-link">Sign up</a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
 </div>
 
-<div>
-    <button>
-        <a href="/signup">Sign up</a>
-    </button>
+
+<div class="container">
+    <p>Welcome. Nothing to see here yet.</p>
 </div>
 {% endblock %}

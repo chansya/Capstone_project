@@ -2,36 +2,67 @@
 {% block title %}Sign up{% endblock %}
 
 {% block body %}
-<h2>Create an account</h2>
-<form action="/create_account" method="POST">
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required>
-    </div>
-    
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-    </div>
 
-    <div>
-        <label for="pw">Password:</label>
-        <input type="password" name="password" id="pw" minlength="7" maxlength="15" required onChange="checkPassword()">
-    </div>
 
-    <div>
-        <label for="confirm_pw">Confirm password:</label>
-        <input type="password" name="confirm_pw" id="confirm_pw" minlength="7" maxlength="15" required onChange="checkPassword()">
-    </div>
 
-    <div>
-        <button type="submit">Create account</button>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a href="#" class="navbar-brand">STICK</a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/" class="nav-item nav-link active">Home</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="/login" class="nav-item nav-link">Log in</a>
+                <a href="/signup" class="nav-item nav-link">Sign up</a>
 
-</form>
-<div>
-    <p>Already a user? <a href="/login">Log in here.</a></p>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+    <div class="row"> 
+        <div class="col-6 offset-6">
+            <h4>Create an account</h4>
+            <form action="/create_account" method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" name="name" id="name" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pw" class="form-label">Password:</label>
+                    <input type="password" name="password" id="pw" minlength="7" maxlength="15" class="form-control" required onChange="checkPassword()">
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirm_pw" class="form-label">Confirm password:</label>
+                    <input type="password" name="confirm_pw" id="confirm_pw" minlength="7" maxlength="15" class="form-control" required onChange="checkPassword()">
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-secondary">Create account</button>
+                </div>
+
+            </form>
+            <div>
+                <p>Already a user? <a href="/login">Log in here.</a></p>
+            </div>
+        </div>
+        
+    </div>
 </div>
+
 {% endblock %}
 
 {% block after_body %}
