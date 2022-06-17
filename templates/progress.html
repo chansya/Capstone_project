@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+
 {% block title %}My progress{% endblock %}
+
 {% block head %}
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
@@ -32,11 +34,13 @@
     </div>
 </nav>
 
+
 <div class="container">
   <div class="row">
     <div class="col-md-5">
       <h4>Progress</h4>
       <a href="/calendar">Click to view in Calendar</a>
+      <div id="calendar"></div>
       
       
     </div>
@@ -86,7 +90,49 @@
     </div>
     
     <div class="col-md-2" id="record_section">
-        <form action="/create_record" id="record_form">
+    <!-- Button triggers the modal -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rec_modal">Record modal</button>
+    <!-- Modal -->
+    <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Log your habit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="/create_modal_record">
+              <div class="mb-3">
+                <label for="modal-habit" class="form-label">Choose habit to log:</label>
+                <select name="modal-habit" class="form-control" id="modal-habit" required>
+                  {% for habit in habits %}
+                  <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="modal-notes" class="form-label">Notes to self:</label>
+                <textarea name="modal-notes" class="form-control" id="modal-notes" cols="50" rows="5"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="modal-date" class="form-label">Record date:</label>
+                <input type="date" name="modal-date" class="form-control" id="modal-date" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+      </div>
+
+
+      <!-- original record form -->
+        <!-- <form action="/create_record" id="record_form">
           <label for="habit_done">Select habit to record:</label>
           <select name="habit_done" id="habit_done" required>
             {% for habit in habits %}
@@ -99,16 +145,35 @@
           <label for="record_date">Record date:</label>
           <input type="date" name="record_date" id="record_date" required>
           <button>Save</button>
-        </form>
+        </form> -->
     </div>
   </div>
 
 </div>
 
 
+<!-- JS script to render calendar with records -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let calendarEl = document.getElementById('calendar');
+    let calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: [
+        {% for event in events %}
+        {
+          title: '{{ event.title }}',
+          start: '{{ event.start }}'
+        },
+        {% endfor %}    
+      ],
+    });
+    
+    calendar.render();
+  });
+</script>
 {% endblock %}
+
 
 {% block after_body %}
 <script src="/static/js/progress_page.js"></script>
-
 {% endblock %}

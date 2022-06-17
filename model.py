@@ -198,6 +198,11 @@ class Badge(db.Model):
         """ Return all badge objects."""
         return cls.query.all()
 
+    @classmethod
+    def count_badge_by_user(cls, user_id):
+        """Return the count of badges for a specific user."""
+        return cls.query.filter(Badge.user_id == user_id).count()
+
 
 def connect_to_db(app, db_uri="postgresql:///habits", echo=True):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_uri

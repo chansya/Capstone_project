@@ -90,7 +90,17 @@ def view_progress():
     user = User.get_by_email(session["user_email"])
     if user:
         habits = Habit.get_by_user(user.user_id)
-        return render_template("progress.html", user=user, habits=habits)
+
+        # loop over habit list to generate record list
+        record_lst = []
+        for habit in habits:
+            records = Record.get_by_habit(habit.habit_id)
+            record_lst += records
+
+        events = [{'title': f"{record.habit.habit_name.capitalize()}",
+                'start': f"{record.record_date}"} for record in record_lst]
+    
+        return render_template("progress.html", user=user, habits=habits, events=events)
     else:
         return redirect('/')
 
@@ -136,17 +146,18 @@ def create_habit():
     db.session.commit()
     flash("Habit created!")
 
-    # reward badges for creating first habit
+    # reward badges for creating habits
     
-    if Habit.count_habit_by_user(user.user_id) == 1:
-        # create badge 1 for sign up
+    
+    if Habit.count_habit_by_user(user.user_id) == 1 and Badge.count_badge_by_user(user.user_id) == 1:
+        # create badge 2 for first habit
         badge2 = Badge.create(user.user_id, "static/img/2.png", "First Goal")
         db.session.add(badge2)
         db.session.commit()
         flash("You've created your first habit and earned a badge!")
 
     if Habit.count_habit_by_user(user.user_id) == 3:
-        # create badge 1 for sign up
+        # create badge 4 for third habits
         badge4 = Badge.create(user.user_id, "static/img/4.png", "Multi-tasker")
         db.session.add(badge4)
         db.session.commit()
@@ -164,16 +175,69 @@ def create_habit():
     return jsonify(habit_to_send)
 
 
-@app.route("/create_record", methods=["POST"])
-def create_record():
-    """Create new record object and add into database."""
+# @app.route("/create_record", methods=["POST"])
+# def create_record():
+#     """Create new record object and add into database."""
 
-    # Extract the input from the request
-    habit_id = request.json.get("habit_id")
-    finished = request.json.get("finished")
-    notes = request.json.get("notes")
+#     # Extract the input from the request
+#     habit_id = request.json.get("habit_id")
+#     finished = request.json.get("finished")
+#     notes = request.json.get("notes")
+#     record_date = datetime.strptime(
+#         request.json.get("record_date"),
+#         '%Y-%m-%d')
+#     finished = True
+
+#     # Create new record object
+#     record = Record.create(habit_id, finished, notes, record_date)
+#     db.session.add(record)
+#     db.session.commit()
+#     flash("Record saved!")
+
+#     # Add current streak by 1 and update max streak if needed
+#     habit = Habit.get_by_id(habit_id)
+#     Habit.update_curr_streak(habit_id)
+#     Habit.update_max_streak(habit_id)
+#     db.session.commit()
+
+#     # Create badges according to number of records
+#     user = User.get_by_email(session["user_email"])
+#     habits = Habit.get_by_user(user.user_id)
+#     record_count = 0
+#     for habit in habits:
+#         record_count +=  Record.count_records_by_habit(habit.habit_id)
+    
+#     if record_count == 1:
+#         badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1")
+#         db.session.add(badge3)
+#         db.session.commit()
+#         flash("You've created your first record and earned a badge!")
+
+#     if record_count == 5:
+#         badge5 = Badge.create(user.user_id, "static/img/5.png", "5-Star Records")
+#         db.session.add(badge5)
+#         db.session.commit()
+#         flash("You've created your 5 records and earned a badge!")
+
+
+
+#     # put information to send back as response in dictionary to jsonify
+#     record_to_send = {"habit_id": habit.habit_id,
+#                       "record_id": record.record_id,
+#                       "current_streak": habit.current_streak,
+#                       "max_streak": habit.max_streak,
+#                       "habit_name": habit.habit_name,
+#                       "record_date": record.record_date
+#                       }
+#     return jsonify(record_to_send)
+
+
+@app.route("/create_modal_record")
+def create_modal_record():
+    habit_id = request.args.get("modal-habit")
+    notes = request.args.get("modal-notes")
     record_date = datetime.strptime(
-        request.json.get("record_date"),
+        request.args.get("modal-date"),
         '%Y-%m-%d')
     finished = True
 
@@ -183,41 +247,7 @@ def create_record():
     db.session.commit()
     flash("Record saved!")
 
-    # Add current streak by 1 and update max streak if needed
-    habit = Habit.get_by_id(habit_id)
-    Habit.update_curr_streak(habit_id)
-    Habit.update_max_streak(habit_id)
-    db.session.commit()
-
-    # Create badges according to number of records
-    user = User.get_by_email(session["user_email"])
-    habits = Habit.get_by_user(user.user_id)
-    record_count = 0
-    for habit in habits:
-        record_count +=  Record.count_records_by_habit(habit.habit_id)
-    
-    if record_count == 1:
-        badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1")
-        db.session.add(badge3)
-        db.session.commit()
-        flash("You've created your first record and earned a badge!")
-
-    if record_count == 5:
-        badge5 = Badge.create(user.user_id, "static/img/5.png", "5-Star Records")
-        db.session.add(badge5)
-        db.session.commit()
-        flash("You've created your 5 records and earned a badge!")
-
-
-
-    # put information to send back as response in dictionary to jsonify
-    record_to_send = {"habit_id": habit.habit_id,
-                      "record_id": record.record_id,
-                      "current_streak": habit.current_streak,
-                      "max_streak": habit.max_streak,
-                      }
-    return jsonify(record_to_send)
-
+    return redirect("/progress")
 
 @app.route("/all_habits")
 def view_habits():
@@ -247,10 +277,11 @@ def view_records(habit_id):
 @app.route("/<record_id>/remove_record")
 def remove_record(record_id):
     record = Record.get_by_id(record_id)
+    habit_id = record.habit.habit_id
     db.session.delete(record)
     db.session.commit()
 
-    return redirect(f"/{record_id}/records")
+    return redirect(f"/{habit_id}/records")
 
 
 @app.route("/all_badges")
