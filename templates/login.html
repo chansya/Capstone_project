@@ -29,7 +29,7 @@
     <div class="row">
         <div class="col-6 offset-6">
             <h4>Log in</h4>
-            <form action="/process_login" method="POST">
+            <form action="/login" method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
                     <input type="email" name="email" id="email" class="form-control">
@@ -39,7 +39,9 @@
                     <label for="pw" class="form-label">Password:</label>
                     <input type="password" name="password" id="pw" maxlength="15" class="form-control">
                 </div>
-            
+                {% if error %}
+                    <p style="color: rgb(161, 15, 15)">{{ error }}</p>
+                {% endif %}
                 <div class="mb-3">
                     <button class="btn btn-secondary">Log in</button>
                 </div>

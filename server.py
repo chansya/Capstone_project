@@ -25,29 +25,47 @@ def index():
         return render_template('index.html')
 
 
-@app.route("/login")
+# @app.route("/login")
+# def login():
+#     """View login page."""
+#     return render_template('login.html')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    """View login page."""
-    return render_template('login.html')
+    error = None
+    if request.method == 'POST':
+        email = request.form.get("email")
+        password = request.form.get("password")
 
+        user = User.get_by_email(email)
+        # if login fail, redirect back to /login
+        if not user or user.password != password:
+            error = "Invalid email/password. Please try again."
+        else:
+            # Log in user by storing the user's email in session
+            session["user_email"] = user.email
+            session.modified = True
+            return redirect("/progress")
 
-@app.route("/process_login", methods=["POST"])
-def process_login():
-    """Verify user's login credentials."""
+    return render_template('login.html', error=error)
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+# @app.route("/process_login", methods=["POST"])
+# def process_login():
+#     """Verify user's login credentials."""
 
-    user = User.get_by_email(email)
-    if not user or user.password != password:
-        flash("The email or password you entered was incorrect.")
-        return redirect("/login")
-    else:
-        # Log in user by storing the user's email in session
-        session["user_email"] = user.email
-        # flash(f"Welcome, {user.name}!")
-        session.modified = True
-        return redirect("/progress")
+#     email = request.form.get("email")
+#     password = request.form.get("password")
+
+#     user = User.get_by_email(email)
+#     # if login fail, redirect back to /login
+#     if not user or user.password != password:
+#         fail_msg = "The email or password you entered was incorrect."
+#         return redirect("/login")
+#     else:
+#         # Log in user by storing the user's email in session
+#         session["user_email"] = user.email
+#         session.modified = True
+#         return redirect("/progress")
 
 
 @app.route("/signup")
@@ -204,6 +222,9 @@ def create_modal_record():
                                  Badge.img_url=="static/img/3.png").first()
     badge5 = Badge.query.filter(Badge.user_id==user.user_id,
                                  Badge.img_url=="static/img/5.png").first()
+    badge6 = Badge.query.filter(Badge.user_id==user.user_id,
+                                 Badge.img_url=="static/img/6.png").first()
+                                
 
     if record_count == 1 and badge3 == None:
         badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1")
@@ -216,6 +237,12 @@ def create_modal_record():
         db.session.add(badge5)
         db.session.commit()
         flash("You've created your 5 records and earned a badge!")
+    
+    if record_count == 10 and badge6 == None:
+        badge6 = Badge.create(user.user_id, "static/img/6.png", "10/10")
+        db.session.add(badge6)
+        db.session.commit()
+        flash("You've created your 10 records and earned a badge!")
 
 
     return redirect("/progress")
