@@ -51,38 +51,3 @@ habitForm.addEventListener('submit',(evt)=>{
         })
 })
 
-// send AJAX post request when user submits the new record aform
-// recordForm.addEventListener('submit', (evt)=>{
-//     evt.preventDefault();
-
-//     const formInput = {
-//         habit_id : document.querySelector('#habit_done').value,
-//         notes : document.querySelector('#notes').value,
-//         record_date : document.querySelector('#record_date').value
-//     }
-
-//     fetch('/create_record', {
-//         method: 'POST',
-//         body: JSON.stringify(formInput),
-//         headers:{
-//             'Content-Type' : 'application/json',
-//         },
-//     })
-//         .then(response => response.json())
-//         .then(recordData=>{
-//             document.querySelector(`#curr_for_${recordData.habit_id}`)
-//                 .innerHTML=`Current streak: ${recordData.current_streak}`;
-//             document.querySelector(`#max_for_${recordData.habit_id}`)
-//                 .innerHTML=`Longest streak: ${recordData.max_streak}`
-
-//             console.log(recordData.habit_name)
-//             console.log(recordData.record_date)
-
-//             calendar.addEvent({
-//                 title: recordData.habit_name,
-//                 start: recordData.record_date
-//             })
-//             calendar.render();
-//         })
-// })
-

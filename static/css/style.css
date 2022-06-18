@@ -2,7 +2,6 @@
     display: none;
 }
 
-h4{
-    color: darkblue;
-    text-decoration: underline;
+body{
+    font-family: 'Montserrat', sans-serif;
 }

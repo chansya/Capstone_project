@@ -5,22 +5,66 @@
 {% block head %}
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
-
-<link rel="stylesheet" href="static/css/style.css">
 {% endblock %}
 
 {% block body %}
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/progress">STICK</a>
-      
+      <a class="navbar-brand" href="/progress">APP NAME</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-10">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-8">
+          <!-- Modal form for record-->
+          <li class="nav-item">
+            <!-- Button triggers the modal -->
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#rec_modal">Log a habit</button>
+            <!-- Modal -->
+            <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Log your habit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/create_modal_record">
+                      <div class="mb-3">
+                        <label for="modal-habit" class="form-label">Choose habit to log:</label>
+                        <select name="modal-habit" class="form-control" id="modal-habit" required>
+                          {% for habit in habits %}
+                          <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="modal-notes" class="form-label">Notes to self:</label>
+                        <textarea name="modal-notes" class="form-control" id="modal-notes" cols="50" rows="5"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="modal-date" class="form-label">Record date:</label>
+                        <input type="date" name="modal-date" class="form-control" id="modal-date" required>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!-- Dropdown menu -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {{ user.name}}'s profile
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a href="">Add a habit</a></li>
               <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
               <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -35,15 +79,13 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-5">
-      <h4>Progress</h4>
-      <a href="/calendar">Click to view in Calendar</a>
+    <div class="col-md-8">
+      <!-- <h4>Progress</h4> -->
+      <!-- <a href="/calendar">Click to view in Calendar</a> -->
       <div id="calendar"></div>
-      
-      
     </div>
     
-    <div class="col-md-5" id="habit_list">
+    <div class="col-md-4" id="habit_list">
       <button id="show_form">Add a habit</button>
       <div>
         <form action="/create_habit" method="POST" id="habit_form">
@@ -72,7 +114,7 @@
         </form>
       </div>
       <hr>
-      <h4>My Habits</h4>
+      <h4>Overview</h4>
       {% if habits %}
         {% for habit in habits %}
           <p>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</p>
@@ -87,48 +129,10 @@
       {% endif %}
     </div>
     
-    <div class="col-md-2" id="record_section">
-    <!-- Button triggers the modal -->
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rec_modal">Record modal</button>
-    <!-- Modal -->
-    <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modal-title">Log your habit</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            
-            </button>
-          </div>
-          <div class="modal-body">
-            <form action="/create_modal_record">
-              <div class="mb-3">
-                <label for="modal-habit" class="form-label">Choose habit to log:</label>
-                <select name="modal-habit" class="form-control" id="modal-habit" required>
-                  {% for habit in habits %}
-                  <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="modal-notes" class="form-label">Notes to self:</label>
-                <textarea name="modal-notes" class="form-control" id="modal-notes" cols="50" rows="5"></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="modal-date" class="form-label">Record date:</label>
-                <input type="date" name="modal-date" class="form-control" id="modal-date" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </form>
-          </div>
-          <div class="modal-footer">
-          </div>
-        </div>
-      </div>
-      </div>
+    <!-- <div class="col-md-2" id="record_section"> -->
+    
 
-
+      
       <!-- original record form -->
         <!-- <form action="/create_record" id="record_form">
           <label for="habit_done">Select habit to record:</label>
@@ -144,7 +148,7 @@
           <input type="date" name="record_date" id="record_date" required>
           <button>Save</button>
         </form> -->
-    </div>
+    <!-- </div> -->
   </div>
 
 </div>
@@ -173,5 +177,5 @@
 
 
 {% block after_body %}
-<script src="/static/js/progress_page.js"></script>
+<script src="/static/js/app.js"></script>
 {% endblock %}

@@ -3,23 +3,55 @@
 
 
 {% block body %}
-<h2>All records for {{ habit.habit_name }} </h2>
-<a href="/all_habits">Back to my habits</a>
-{% if records %}
-    <ul>
-        {% for record in records %}
-            <li>
-                Record Date: {{ record.record_date }}
-                <p>Notes: {{ record.notes }}</p>
-            </li>
-            <a href="/{{record.record_id}}/edit_record">Edit(to do)</a>
-            <a href="/{{record.record_id}}/remove_record">Remove</a>
-            <hr>
-        {% endfor %}
-    </ul>
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/progress">APP NAME</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-10">
+          
+          <!-- Dropdown menu -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.name}}'s profile
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a href="">Add a habit</a></li>
+              <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
+              <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
 
-{% else %}
-<p id="new_record_prompt">Uh-oh there's no record for this habit yet. <a href="/progress">Make one here.</a>
-</p>
-{% endif %}
+<div class="container">
+ 
+        <h2>All records for {{ habit.habit_name }} </h2>
+        <a href="/all_habits">Back to my habits</a>
+        {% if records %}
+            <ul>
+                {% for record in records %}
+                    <li>
+                        Record Date: {{ record.record_date }}
+                        <p>Notes: {{ record.notes }}</p>
+                    </li>
+                    <a href="/{{record.record_id}}/edit_record">Edit(to do)</a>
+                    <a href="/{{record.record_id}}/remove_record">Remove</a>
+                    <hr>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p id="new_record_prompt">Uh-oh there's no record for this habit yet. <a href="/progress">Make one here.</a>
+        </p>
+        {% endif %}
+  
+</div>
+
 {% endblock %}
