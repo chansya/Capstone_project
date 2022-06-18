@@ -18,87 +18,59 @@ API_KEY = os.environ['FLATICON_KEY']
 @app.route("/")
 def index():
     """View homepage"""
-
     if session.get("user_email"):
         return redirect("/progress")
-    else:
-        return render_template('index.html')
+    
+    return render_template('index.html')
 
-
-# @app.route("/login")
-# def login():
-#     """View login page."""
-#     return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """View login page and process login."""
     error = None
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
 
         user = User.get_by_email(email)
-        # if login fail, redirect back to /login
+        # if login fail, redirect back to login with error message
         if not user or user.password != password:
             error = "Invalid email/password. Please try again."
-        else:
-            # Log in user by storing the user's email in session
-            session["user_email"] = user.email
-            session.modified = True
-            return redirect("/progress")
+        
+        session["user_email"] = user.email
+        session.modified = True
+        return redirect("/progress")
 
     return render_template('login.html', error=error)
 
-# @app.route("/process_login", methods=["POST"])
-# def process_login():
-#     """Verify user's login credentials."""
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
-
-#     user = User.get_by_email(email)
-#     # if login fail, redirect back to /login
-#     if not user or user.password != password:
-#         fail_msg = "The email or password you entered was incorrect."
-#         return redirect("/login")
-#     else:
-#         # Log in user by storing the user's email in session
-#         session["user_email"] = user.email
-#         session.modified = True
-#         return redirect("/progress")
-
-
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    """View signup page."""
-    return render_template('signup.html')
-
-
-@app.route("/create_account", methods=["POST"])
-def create_account():
     """Create a new user."""
-    name = request.form.get("name")
-    email = request.form.get("email")
-    password = request.form.get("password")
+    if request.method == 'POST':
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-    user = User.get_by_email(email)
-    if user:
-        flash("Email already exists. Please log in.")
-        return redirect("/login")
-    else:
-        user = User.create(name, email, password)
-        db.session.add(user)
-        db.session.commit()
-        session["user_email"] = user.email
-        # flash(f"Account created. Welcome, {user.name}!")
-        session.modified = True
-        
-        # Create badge 1 for sign up
-        badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome")
-        db.session.add(badge1)
-        db.session.commit()
-        flash("You've earned a badge! You can see it under your profile.")
-        return redirect("/progress")
+        user = User.get_by_email(email)
+        if user:
+            flash("Email already exists. Please log in.")
+            return redirect("/login")
+        else:
+            user = User.create(name, email, password)
+            db.session.add(user)
+            db.session.commit()
+            session["user_email"] = user.email
+            session.modified = True
+            
+            # Create badge 1 for sign up
+            badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome")
+            db.session.add(badge1)
+            db.session.commit()
+            flash("You've earned a badge! You can see it under your profile.")
+            return redirect("/progress")
+
+    return render_template('signup.html')
 
 
 @app.route("/progress")
