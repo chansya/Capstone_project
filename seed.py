@@ -58,11 +58,11 @@ def load_records():
     for row in open("data/sample_records.csv"):
         row_lst = row.rstrip().split("|")
 
-        habit_id, finished, notes = row_lst[:-1]
+        habit_id, finished, notes, img_url = row_lst[:-1]
 
         record_date = datetime.strptime(row_lst[-1], "%Y-%m-%d")
 
-        record = Record.create(habit_id, parse_boolean(finished), notes, record_date)
+        record = Record.create(habit_id, parse_boolean(finished), notes, img_url, record_date)
         db.session.add(record)
 
     db.session.commit()
@@ -73,9 +73,9 @@ def load_badges():
 
     for row in open("data/sample_badges.csv"):
         row = row.rstrip()
-        user_id, img_url, message = row.split("|")
+        user_id, img_url, name, message = row.split("|")
 
-        badge = Badge.create(user_id, img_url, message)
+        badge = Badge.create(user_id, img_url, name, message)
         db.session.add(badge)
 
     db.session.commit()

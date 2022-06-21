@@ -1,18 +1,18 @@
 const newHabitBtn = document.querySelector('#show_form');
-const habitForm = document.querySelector('#habit_form');
+const habitForm = document.querySelector('#new_habit_form');
 const cancelBtn = document.querySelector('#cancel_form');
 const saveBtn = document.querySelector('#save_form');
 const recordForm = document.querySelector('#record_form');
 
 // display the new habit form when user clicks on "Add a habit" btn
-newHabitBtn.addEventListener('click', ()=>{
-    habitForm.style.display = 'block';
-})
+// newHabitBtn.addEventListener('click', ()=>{
+//     habitForm.style.display = 'block';
+// })
 
 // hide the form when user clicks "Cancel" btn
-cancelBtn.addEventListener('click', ()=>{
-    habitForm.style.display = 'none';
-})
+// cancelBtn.addEventListener('click', ()=>{
+//     habitForm.style.display = 'none';
+// })
 
 // send AJAX post request when user submits the new habit form
 habitForm.addEventListener('submit',(evt)=>{
@@ -24,6 +24,7 @@ habitForm.addEventListener('submit',(evt)=>{
         time_period : document.querySelector('#time_period').value,
         start_date : document.querySelector('#start_date').value
     }
+    console.log(formInput)
     // send AJAX post request to add new record to database
     fetch('/create_habit', {
         method: 'POST',
@@ -51,3 +52,10 @@ habitForm.addEventListener('submit',(evt)=>{
         })
 })
 
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
+
+// document.querySelector("img[data-bs-toggle='tooltip']").tooltip()

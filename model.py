@@ -127,6 +127,7 @@ class Record(db.Model):
     habit_id = db.Column(db.Integer, db.ForeignKey("habits.habit_id"))
     finished = db.Column(db.Boolean, nullable=False)
     notes = db.Column(db.Text, nullable=True)
+    img_url = db.Column(db.String, nullable=True)
     record_date = db.Column(db.Date, nullable=False)
 
     # The habit to which a record belongs
@@ -136,10 +137,10 @@ class Record(db.Model):
         return f"<Record record_id={self.record_id} finished={self.finished}>"
 
     @classmethod
-    def create(cls, habit_id, finished, notes, record_date):
+    def create(cls, habit_id, finished, notes, img_url, record_date):
         """Create and return a new record."""
         return cls(habit_id=habit_id, finished=finished, 
-                    notes=notes, record_date=record_date)
+                    notes=notes, img_url=img_url, record_date=record_date)
 
     @classmethod
     def get_by_id(cls, record_id):
@@ -170,6 +171,7 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     img_url = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False)
     message = db.Column(db.String, nullable=False)
 
     # The user to which a badge belongs
@@ -179,9 +181,9 @@ class Badge(db.Model):
         return f"<Badge badge_id={self.badge_id} img_url={self.img_url}>"
 
     @classmethod
-    def create(cls, user_id, img_url, message):
+    def create(cls, user_id, img_url, name, message):
         """Create and return a new badge object."""
-        return cls(user_id=user_id, img_url=img_url, message=message)
+        return cls(user_id=user_id, img_url=img_url, name=name, message=message)
 
     @classmethod
     def get_by_id(cls, badge_id):

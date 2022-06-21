@@ -1,8 +1,10 @@
 
+from unittest import result
 from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime
 import os
+import cloudinary.uploader
 import requests
 from jinja2 import StrictUndefined
 
@@ -11,8 +13,10 @@ app.secret_key= os.environ['secret_key']
 
 app.jinja_env.undefined = StrictUndefined
 
-API_KEY = os.environ['FLATICON_KEY']
 
+CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
+CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
+CLOUD_NAME = "habittracking"
 
 
 @app.route("/")
@@ -64,7 +68,7 @@ def signup():
             session.modified = True
             
             # Create badge 1 for sign up
-            badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome")
+            badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome", "Register an account")
             db.session.add(badge1)
             db.session.commit()
             flash("You've earned a badge! You can see it under your profile.")
@@ -135,11 +139,14 @@ def create_habit():
     db.session.add(habit)
     db.session.commit()
 
-    # reward badges for creating habits
-    
-    if Habit.count_habit_by_user(user.user_id) == 1 and Badge.count_badge_by_user(user.user_id) == 1:
-        # create badge 2 for first habit
-        badge2 = Badge.create(user.user_id, "static/img/2.png", "First Goal")
+    # Reward badges for creating habits
+
+    # Check for any existing badge 2 to avoid duplicate
+    badge2 = Badge.query.filter(Badge.user_id==user.user_id,
+                                 Badge.img_url=="static/img/2.png").first()
+    if Habit.count_habit_by_user(user.user_id) == 1 and badge2 == None:
+        # Create badge 2 for first habit
+        badge2 = Badge.create(user.user_id, "static/img/2.png", "First Goal", "Create first habit")
         db.session.add(badge2)
         db.session.commit()
         flash("You've created your first habit and earned a badge!")
@@ -150,7 +157,7 @@ def create_habit():
 
     if Habit.count_habit_by_user(user.user_id) == 3 and badge4 == None:
         # create badge 4 for third habits
-        badge4 = Badge.create(user.user_id, "static/img/4.png", "Multi-tasker")
+        badge4 = Badge.create(user.user_id, "static/img/4.png", "Multi-tasker", "Create 3 habits")
         db.session.add(badge4)
         db.session.commit()
         flash("You've created your three habits and earned a badge!")
@@ -164,21 +171,34 @@ def create_habit():
                      "time_period": habit.time_period,
                      "start_date": habit.start_date,
                      }
+    
     return jsonify(habit_to_send)
 
 
-@app.route("/create_modal_record")
+@app.route("/create_modal_record", methods=["POST"])
 def create_modal_record():
     """Create a record for a habit and add to database."""
-    habit_id = request.args.get("modal-habit")
-    notes = request.args.get("modal-notes")
+    habit_id = request.form.get("modal-habit")
+    notes = request.form.get("modal-notes")
     record_date = datetime.strptime(
-        request.args.get("modal-date"),
+        request.form.get("modal-date"),
         '%Y-%m-%d')
+    photo = request.files["modal-photo"]
     finished = True
 
+    if photo:
+        # make API request to save uploaded image to Cloudinary
+        result = cloudinary.uploader.upload(photo, 
+                                            api_key=CLOUDINARY_KEY,
+                                            api_secret=CLOUDINARY_SECRET,
+                                            cloud_name=CLOUD_NAME)
+        # url for the uploaded image
+        img_url = result['secure_url']
+    else:
+        img_url=""
+
     # Create new record object
-    record = Record.create(habit_id, finished, notes, record_date)
+    record = Record.create(habit_id, finished, notes, img_url, record_date)
     db.session.add(record)
     db.session.commit()
     
@@ -189,7 +209,7 @@ def create_modal_record():
     for habit in habits:
         record_count +=  Record.count_records_by_habit(habit.habit_id)
     
-    # Check for any existing badge 4 to avoid duplicate
+    # Check for any existing badges to avoid duplicate
     badge3 = Badge.query.filter(Badge.user_id==user.user_id,
                                  Badge.img_url=="static/img/3.png").first()
     badge5 = Badge.query.filter(Badge.user_id==user.user_id,
@@ -199,19 +219,19 @@ def create_modal_record():
                                 
 
     if record_count == 1 and badge3 == None:
-        badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1")
+        badge3 = Badge.create(user.user_id, "static/img/3.png", "From 0 To 1", "Create first record")
         db.session.add(badge3)
         db.session.commit()
         flash("You've created your first record and earned a badge!")
 
     if record_count == 5 and badge5 == None:
-        badge5 = Badge.create(user.user_id, "static/img/5.png", "5-Star Records")
+        badge5 = Badge.create(user.user_id, "static/img/5.png", "5-Star Records", "Create 5 records")
         db.session.add(badge5)
         db.session.commit()
         flash("You've created your 5 records and earned a badge!")
     
     if record_count == 10 and badge6 == None:
-        badge6 = Badge.create(user.user_id, "static/img/6.png", "10/10")
+        badge6 = Badge.create(user.user_id, "static/img/6.png", "Perfect 10", "Create 10 records")
         db.session.add(badge6)
         db.session.commit()
         flash("You've created your 10 records and earned a badge!")
@@ -262,7 +282,7 @@ def remove_record(record_id):
 @app.route("/all_badges")
 def view_badges():
     """View all the badges for a user."""
-    user = User.get_by_email(session.get("user_email"))
+    user = User.get_by_email(session["user_email"])
     badges = Badge.get_by_user(user.user_id)
     return render_template("all_badges.html", user=user, badges=badges)
 

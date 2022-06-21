@@ -37,15 +37,15 @@
         <ul>
             {% for badge in badges %}
                 <li>
-                    <img src="{{badge.img_url}}" alt="badge">
-                    <p>{{ badge.message }}</p>
+                    <img src="{{badge.img_url}}" alt="badge" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ badge.message }}">
+                    <p>{{ badge.name }}</p>
                 </li>
                 <hr>
             {% endfor %}
         </ul>
 
     {% else %}
-    <p id="new_habit_prompt">Uh-oh you haven't earned any badges yet. <a href="/progress">Get one here.</a>
+    <p id="new_habit_prompt">Uh-oh you haven't earned any badges yet. <a href="/progress">Earn one here.</a>
     </p>
     {% endif %}
 </div>

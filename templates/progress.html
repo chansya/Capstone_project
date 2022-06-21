@@ -15,11 +15,61 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-8">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 offset-7">
+          <!-- Modal form for new habit -->
+          <li class="nav-item">
+            <!-- Button triggers the modal -->
+              <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#add_habit">
+                Add habit
+              </button>
+
+              <!-- Modal -->
+            <div class="modal fade" id="add_habit" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Add a habit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/create_habit" method="POST" id="new_habit_form">
+                      <div class="mb-3">
+                        <label for="habit_name" class="form-label">Name</label>
+                        <input type="text" name="habit_name" class="form-control" id="habit_name" required>
+
+                      </div>
+                      <div class="mb-3">
+                        <label for="frequency" class="form-label">Frequency</label>
+                        <input type="number" name="frequency" class="form-control" id="frequency" min="1" required> 
+                        <span>Time(s)</span>
+                        <select name="time_period" class="form-control" id="time_period" required>
+                          <option value="per day">Per Day</option>
+                          <option value="per week">Per Week</option>
+                          <option value="per month">Per Month</option>
+                        </select>
+
+          
+                      </div>
+                      <div class="mb-3">
+                        <label for="start_date" class="form-label">Start date</label>
+                        <input type="date" name="start_date" class="form-control" id="start_date" required>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
           <!-- Modal form for record-->
           <li class="nav-item">
             <!-- Button triggers the modal -->
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#rec_modal">Log a habit</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#rec_modal">Log habit</button>
             <!-- Modal -->
             <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
               <div class="modal-dialog">
@@ -31,18 +81,24 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <form action="/create_modal_record">
+                    <form action="/create_modal_record" method="POST" enctype="multipart/form-data">
                       <div class="mb-3">
                         <label for="modal-habit" class="form-label">Choose habit to log:</label>
                         <select name="modal-habit" class="form-control" id="modal-habit" required>
-                          {% for habit in habits %}
-                          <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
-                          {% endfor %}
+                          
+                            {% for habit in habits %}
+                            <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
+                            {% endfor %}
+                        
                         </select>
                       </div>
                       <div class="mb-3">
                         <label for="modal-notes" class="form-label">Notes to self:</label>
                         <textarea name="modal-notes" class="form-control" id="modal-notes" cols="50" rows="5"></textarea>
+                      </div class="mb-3">
+                        <label for="modal-photo" class="form-label">Choose photo to upload:</label>
+                        <input type="file" name="modal-photo" id="modal-photo">
+                      <div>
                       </div>
                       <div class="mb-3">
                         <label for="modal-date" class="form-label">Record date:</label>
@@ -64,7 +120,7 @@
               {{ user.name}}'s profile
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a href="">Add a habit</a></li>
+              <li><a class="dropdown-item" href="#">Add a habit</a></li>
               <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
               <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -79,15 +135,15 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
       <!-- <h4>Progress</h4> -->
       <!-- <a href="/calendar">Click to view in Calendar</a> -->
       <div id="calendar"></div>
     </div>
     
-    <div class="col-md-4" id="habit_list">
-      <button id="show_form">Add a habit</button>
-      <div>
+    <div class="col-md-5" id="habit_list">
+      <!-- <button id="show_form">Add a habit</button> -->
+      <!-- <div>
         <form action="/create_habit" method="POST" id="habit_form">
             <div>
                 <label for="habit_name">Name</label>
@@ -112,7 +168,7 @@
             <button type="submit" id="save_form">Save</button>
     
         </form>
-      </div>
+      </div> -->
       <hr>
       <h4>Overview</h4>
       {% if habits %}
@@ -177,5 +233,4 @@
 
 
 {% block after_body %}
-<script src="/static/js/app.js"></script>
 {% endblock %}

@@ -31,7 +31,6 @@
 </nav>
 
 <div class="container">
- 
         <h2>All records for {{ habit.habit_name }} </h2>
         <a href="/all_habits">Back to my habits</a>
         {% if records %}
@@ -40,6 +39,9 @@
                     <li>
                         Record Date: {{ record.record_date }}
                         <p>Notes: {{ record.notes }}</p>
+                        {% if record.img_url != "" %}
+                        <img src="{{ record.img_url }}" alt="record_image" width="300px">
+                        {% endif%}
                     </li>
                     <a href="/{{record.record_id}}/edit_record">Edit(to do)</a>
                     <a href="/{{record.record_id}}/remove_record">Remove</a>
