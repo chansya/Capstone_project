@@ -10,7 +10,7 @@
 {% block body %}
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/progress">APP NAME</a>
+      <a class="navbar-brand" href="/progress">STICK</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,8 +37,8 @@
                       <div class="mb-3">
                         <label for="habit_name" class="form-label">Name</label>
                         <input type="text" name="habit_name" class="form-control" id="habit_name" required>
-
                       </div>
+
                       <div class="mb-3">
                         <label for="frequency" class="form-label">Frequency</label>
                         <input type="number" name="frequency" class="form-control" id="frequency" min="1" required> 
@@ -48,13 +48,13 @@
                           <option value="per week">Per Week</option>
                           <option value="per month">Per Month</option>
                         </select>
-
-          
                       </div>
+
                       <div class="mb-3">
                         <label for="start_date" class="form-label">Start date</label>
                         <input type="date" name="start_date" class="form-control" id="start_date" required>
                       </div>
+
                       <button type="submit" class="btn btn-primary">Submit</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </form>
@@ -120,7 +120,6 @@
               {{ user.name}}'s profile
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Add a habit</a></li>
               <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
               <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -135,49 +134,36 @@
 
 <div class="container">
   <div class="row">
+    <!-- Calendar -->
     <div class="col-md-7">
-      <!-- <h4>Progress</h4> -->
-      <!-- <a href="/calendar">Click to view in Calendar</a> -->
       <div id="calendar"></div>
     </div>
     
     <div class="col-md-5" id="habit_list">
-      <!-- <button id="show_form">Add a habit</button> -->
-      <!-- <div>
-        <form action="/create_habit" method="POST" id="habit_form">
-            <div>
-                <label for="habit_name">Name</label>
-                <input type="text" name="habit_name" id="habit_name" required>
-            </div>
-            <div>
-                <label for="frequency">Frequency</label>
-                <input type="number" name="frequency" id="frequency" min="1" required> 
-                <span>Time(s)</span>
-                <select name="time_period" id="time_period" required>
-                    <option value="per day">Per Day</option>
-                    <option value="per week">Per Week</option>
-                    <option value="per month">Per Month</option>
-                </select>
-            </div>
-            <div>
-                <label for="start_date">Start Date</label>
-                <input type="date" name="start_date" id="start_date" required>
-    
-            </div>
-            <button type="button" id="cancel_form">Cancel</button>
-            <button type="submit" id="save_form">Save</button>
-    
-        </form>
-      </div> -->
       <hr>
       <h4>Overview</h4>
       {% if habits %}
-        {% for habit in habits %}
-          <p>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</p>
-          <p id="curr_for_{{ habit.habit_id }}">Current streak: {{ habit.current_streak}}</p>
-          <p id="max_for_{{ habit.habit_id }}">Longest streak: {{ habit.max_streak}}</p>
-          <hr>
-        {% endfor %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="table-dark"></th>
+            <th scope="col" class="table-dark">Current Streak</th>
+            <th scope="col" class="table-dark">Longest Streak</th>
+            <th scope="col" class="table-dark">Total Record</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for habit in habits %}
+          <tr>
+            <th scope="row">{{habit.habit_name}}</th>
+            <td>{{ habit.current_streak}}</td>
+            <td>{{ habit.max_streak}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+      
 
       {% else %}
         <p id="new_habit_prompt">Uh-oh there's no habit yet.
