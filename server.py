@@ -91,6 +91,7 @@ def view_progress():
             records = Record.get_by_habit(habit.habit_id)
             record_lst += records
             Habit.update_curr_streak(habit.habit_id)
+            Habit.update_max_streak(habit.habit_id)
 
         # populate events list for calendar 
         events = [{'title': f"{record.habit.habit_name.capitalize()}",
@@ -178,15 +179,15 @@ def create_habit():
     return jsonify(habit_to_send)
 
 
-@app.route("/create_modal_record", methods=["POST"])
-def create_modal_record():
+@app.route("/create_record", methods=["POST"])
+def create_record():
     """Create a record for a habit and add to database."""
-    habit_id = request.form.get("modal-habit")
-    notes = request.form.get("modal-notes")
+    habit_id = request.form.get("log-habit")
+    notes = request.form.get("log-notes")
     record_date = datetime.strptime(
-        request.form.get("modal-date"),
+        request.form.get("log-date"),
         '%Y-%m-%d')
-    photo = request.files["modal-photo"]
+    photo = request.files["log-photo"]
     finished = True
 
     if photo:
@@ -206,8 +207,9 @@ def create_modal_record():
     db.session.commit()
     
     # update streak based on record
-    Habit.update_curr_streak(habit_id)
-    Habit.update_max_streak(habit_id)
+    # Habit.update_curr_streak(habit_id)
+    # Habit.update_max_streak(habit_id)
+
     # Create badges according to number of records
     user = User.get_by_email(session["user_email"])
     habits = Habit.get_by_user(user.user_id)

@@ -81,10 +81,10 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <form action="/create_modal_record" method="POST" enctype="multipart/form-data">
+                    <form action="/create_record" method="POST" enctype="multipart/form-data">
                       <div class="mb-3">
-                        <label for="modal-habit" class="form-label">Choose habit to log:</label>
-                        <select name="modal-habit" class="form-control" id="modal-habit" required>
+                        <label for="log-habit" class="form-label">Choose habit: <span style="color: red">*</span></label>
+                        <select name="log-habit" class="form-control" id="log-habit" required>
                           
                             {% for habit in habits %}
                             <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
@@ -93,17 +93,18 @@
                         </select>
                       </div>
                       <div class="mb-3">
-                        <label for="modal-notes" class="form-label">Notes to self:</label>
-                        <textarea name="modal-notes" class="form-control" id="modal-notes" cols="50" rows="5"></textarea>
+                        <label for="log-notes" class="form-label">Notes to self:</label>
+                        <textarea name="log-notes" class="form-control" id="log-notes" cols="50" rows="3"></textarea>
                       </div class="mb-3">
-                        <label for="modal-photo" class="form-label">Choose photo to upload:</label>
-                        <input type="file" name="modal-photo" id="modal-photo">
+                        <label for="log-photo" class="form-label">Choose photo to upload:</label>
+                        <input type="file" name="log-photo" id="log-photo">
                       <div>
                       </div>
                       <div class="mb-3">
-                        <label for="modal-date" class="form-label">Record date:</label>
-                        <input type="date" name="modal-date" class="form-control" id="modal-date" required>
+                        <label for="log-date" class="form-label">Record date: <span style="color: red">*</span></label>
+                        <input type="date" name="log-date" class="form-control" id="log-date" required>
                       </div>
+                      <p><span style="color: red">*</span> required field</p>
                       <button type="submit" class="btn btn-primary">Submit</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </form>

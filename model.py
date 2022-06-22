@@ -1,8 +1,8 @@
 """ Models for habit building app. """
 
-from datetime import datetime, timedelta
-from email import message
+from datetime import date, timedelta
 from flask_sqlalchemy import SQLAlchemy
+import pendulum
 
 db = SQLAlchemy()
 
@@ -103,53 +103,112 @@ class Habit(db.Model):
     def update_curr_streak(cls, habit_id):
         habit = cls.query.get(habit_id)
         
-        today = datetime.today().date()
+        today = date.today()
 
-        # for daily
+        # For daily goal
         if habit.time_period == "daily":
             # start from today and count streak going back one day at a time
             habit.current_streak = 0
             # if goal is reached today, update curr streak to 1
             rec_today = Record.query.filter(Record.habit_id==habit_id, Record.record_date==today).all()
-            if len(rec_today) == habit.frequency:
+            if len(rec_today) >= habit.frequency:
                 habit.current_streak = 1
             
             yesterday = today - timedelta(days=1)
-
             rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
-
+            
             while rec_ytd != None:
                 yesterday = today - timedelta(days=1)
                 rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
 
-                # if total record from yesterday < frequency set:
+                # if total record from yesterday meets the frequency set:
                 if len(rec_ytd) >= habit.frequency:
-                    # reset current streak to zero
+                    # increase current streak by 1
                     habit.current_streak += 1
+                # if goal not met, stop the streak count
                 else:
                     break
                 today = yesterday
-        
-    # @classmethod
-    # def update_curr_streak(cls, habit_id):
-    #     """ Increment current streak by one when user creates a record."""
-    #     habit = cls.query.get(habit_id)
-    #     today = datetime.today().date()
-    #     print("***************")
-    #     print(today)
-    #     print(habit.current_streak)
-    #     # for daily goal
-    #     if habit.time_period == "daily":
-    #         rec_today = Record.query.filter(Record.habit_id==habit_id, Record.record_date==today).all()
-    #         if len(rec_today) == habit.frequency:
-    #             habit.current_streak = habit.current_streak + 1
+
+
+        # For weekly goal
+        elif habit.time_period == "weekly":
+             # start from current week and count streak going back one week at a time
+            habit.current_streak = 0
+
+            curr_week_start = today - timedelta(days=today.weekday())
+            curr_week_end = curr_week_start + timedelta(days=6)
+
+            # determine number of records within current week:
+            rec_curr_week = Record.query.filter(Record.habit_id==habit_id, 
+                                                Record.record_date>=curr_week_start,
+                                                Record.record_date<=curr_week_end).all()
+            
+            # if goal is reached this week, update curr streak to 1
+            if len(rec_curr_week) >= habit.frequency:
+                habit.current_streak = 1
+            
+            # while loop to check past weeks for streak
+            while rec_curr_week != None:
+                last_week_start = curr_week_start - timedelta(days=7)
+                last_week_end = curr_week_end - timedelta(days=7)
+                # determine number of records within last week:
+                rec_last_week = Record.query.filter(Record.habit_id==habit_id, 
+                                                    Record.record_date>=last_week_start,
+                                                    Record.record_date<=last_week_end).all()
+
+                # if total record from last week meets the frequency set:
+                if len(rec_last_week) >= habit.frequency:
+                    # increase current streak by 1
+                    habit.current_streak += 1
+                # if goal not met, stop the streak count
+                else:
+                    break
+                curr_week_start = last_week_start
+                curr_week_end = last_week_end
+
+
+         # For monthly goal
+        elif habit.time_period == "monthly":
+             # start from current month and count streak going back, one month at a time
+            habit.current_streak = 0
+            today = pendulum.today()
+            curr_month_start = today.start_of("month").date()
+            curr_month_end = today.end_of("month").date()
+            
+            # determine number of records within current month:
+            rec_curr_month = Record.query.filter(Record.habit_id==habit_id, 
+                                                Record.record_date>=curr_month_start,                                             Record.record_date<=curr_month_end).all()
+            # if goal is reached this week, update curr streak to 1
+            if len(rec_curr_month) >= habit.frequency:
+                habit.current_streak = 1
+            
+            # while loop to check past months for streak
+            while rec_curr_month != None:
+                
+                last_month_end = curr_month_start - timedelta(days=1)
+                last_month_start = last_month_end.start_of("month")
+
+                # determine number of records within last week:
+                rec_last_month = Record.query.filter(Record.habit_id==habit_id, 
+                                                    Record.record_date>=last_month_start,
+                                                    Record.record_date<=last_month_end).all()
+
+                # if total record from last week meets the frequency set:
+                if len(rec_last_month) >= habit.frequency:
+                    # increase current streak by 1
+                    habit.current_streak += 1
+                # if goal not met, stop the streak count
+                else:
+                    break
+                curr_month_start = last_month_start
+                curr_month_end = last_month_end
+
 
     @classmethod
     def update_max_streak(cls, habit_id):
         """ Update the highest streak. """
         habit = cls.query.get(habit_id)
-        print("^^^^^^^^^^^^^^^^^^^^")
-        print(habit.max_streak)
         if habit.current_streak > habit.max_streak:
             habit.max_streak = habit.current_streak
 

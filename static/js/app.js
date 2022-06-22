@@ -1,18 +1,4 @@
-const newHabitBtn = document.querySelector('#show_form');
 const habitForm = document.querySelector('#new_habit_form');
-const cancelBtn = document.querySelector('#cancel_form');
-const saveBtn = document.querySelector('#save_form');
-const recordForm = document.querySelector('#record_form');
-
-// display the new habit form when user clicks on "Add a habit" btn
-// newHabitBtn.addEventListener('click', ()=>{
-//     habitForm.style.display = 'block';
-// })
-
-// hide the form when user clicks "Cancel" btn
-// cancelBtn.addEventListener('click', ()=>{
-//     habitForm.style.display = 'none';
-// })
 
 // send AJAX post request when user submits the new habit form
 habitForm.addEventListener('submit',(evt)=>{
@@ -38,12 +24,6 @@ habitForm.addEventListener('submit',(evt)=>{
             let prompt = document.querySelector('#new_habit_prompt');
             if(prompt){prompt.remove();}
         
-            // add new habit under My habits
-            // document.querySelector('#habit_list').insertAdjacentHTML('beforeend', 
-            // `<p>${habitData.habit_name} (${habitData.frequency} times ${habitData.time_period})</p>
-            // <p id="curr_for_${habitData.habit_id}">Current streak: ${habitData.current_streak}</p>
-            // <p id="max_for_${habitData.habit_id}">Longest streak: ${habitData.max_streak}</p>
-            // <hr>`);
             document.querySelector('#habit-table').insertAdjacentHTML('beforeend', 
             `<tr>
             <th scope="row">${habitData.habit_name}</th>
@@ -51,19 +31,20 @@ habitForm.addEventListener('submit',(evt)=>{
             <td>${habitData.max_streak}</td>
             <td></td>
             </tr>`);
-            // 
 
             // add new habit in the select menu for record
-            document.querySelector('#modal-habit').insertAdjacentHTML('beforeend',
+            document.querySelector('#log-habit').insertAdjacentHTML('beforeend',
             `<option value="${habitData.habit_id}">${habitData.habit_name}</option>`
             )
         })
 })
 
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+// for tooltip when mouse hovers over badges
+let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
-
-// document.querySelector("img[data-bs-toggle='tooltip']").tooltip()
+// set max day of input date in record form to today
+let logDate = document.querySelector('#log-date')
+logDate.max = new Date().toLocaleDateString('en-ca')
