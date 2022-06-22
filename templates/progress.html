@@ -201,8 +201,12 @@
 
 
 <!-- JS script for bootstrap 5 and render calendar with records -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 
+
+{% endblock %}
+
+
+{% block after_body %}
 <script>
   var recModal = new bootstrap.Modal(document.getElementById('rec_modal'))
 
@@ -219,7 +223,10 @@
         {% endfor %}    
       ],
       selectable: true,
-      select: function(start, end, allDays){
+      select: function(info){
+        // set value of record date to the date user clicks on
+        start = info.startStr;
+        document.querySelector('#log-date').value = start ;
         recModal.show();
       }
     });
@@ -227,8 +234,4 @@
     calendar.render();
   });
 </script>
-{% endblock %}
-
-
-{% block after_body %}
 {% endblock %}

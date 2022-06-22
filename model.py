@@ -110,16 +110,16 @@ class Habit(db.Model):
             # start from today and count streak going back one day at a time
             habit.current_streak = 0
             # if goal is reached today, update curr streak to 1
-            rec_today = Record.query.filter(Record.habit_id==habit_id, Record.record_date==today).all()
+            rec_today = Record.query.filter(Record.habit_id==habit_id, 
+                                            Record.record_date==today).all()
             if len(rec_today) >= habit.frequency:
                 habit.current_streak = 1
             
-            yesterday = today - timedelta(days=1)
-            rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
-            
-            while rec_ytd != None:
+            # loop as long as there is record on the previous day
+            while rec_today != None:
                 yesterday = today - timedelta(days=1)
-                rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
+                rec_ytd = Record.query.filter(Record.habit_id==habit_id, 
+                                              Record.record_date==yesterday).all()
 
                 # if total record from yesterday meets the frequency set:
                 if len(rec_ytd) >= habit.frequency:
@@ -128,6 +128,7 @@ class Habit(db.Model):
                 # if goal not met, stop the streak count
                 else:
                     break
+                # move back one day
                 today = yesterday
 
 
