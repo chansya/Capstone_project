@@ -37,13 +37,16 @@
                 {% for record in records %}
                     <li>
                         Record Date: {{ record.record_date }}
-                        <p>Notes: {{ record.notes }}</p>
+                        {% if record.notes %}
+                          <p>Notes: {{ record.notes }}</p>
+                        {% endif %}
                         {% if record.img_url != "" %}
                         <img src="{{ record.img_url }}" alt="record_image" width="300px">
-                        {% endif%}
+                        {% endif %}
                     </li>
                     <a href="/{{record.record_id}}/edit_record">Edit(to do)</a>
-                    <a href="/{{record.record_id}}/remove_record">Remove</a>
+                    <a href="/{{record.record_id}}/remove_record" 
+                    onclick="return confirm('Are you sure to remove this record?')")>Remove</a>
                     <hr>
                 {% endfor %}
             </ul>

@@ -48,3 +48,4 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 // set max day of input date in record form to today
 let logDate = document.querySelector('#log-date')
 logDate.max = new Date().toLocaleDateString('en-ca')
+
