@@ -52,8 +52,14 @@
                       </div>
 
                       <div class="mb-3">
-                        <label for="start_date" class="form-label">Start date</label>
+                        <label for="start_date" class="form-label">Start Date</label>
                         <input type="date" name="start_date" class="form-control" id="start_date" required>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="reminder" class="form-label">Message To Future Self</label>
+                        <textarea name="reminder" id="reminder" cols="50" rows="3" 
+                        placeholder="E.g. Keep trying! You'll get it right!"></textarea>
                       </div>
 
                       <button type="submit" data-bs-dismiss="modal" class="btn btn-primary">Submit</button>
@@ -105,12 +111,12 @@
                         <label for="log-date" class="form-label">Record date: <span style="color: red">*</span></label>
                         <input type="date" name="log-date" class="form-control" id="log-date" required>
                       </div>
-                      <p><span style="color: red">*</span> required field</p>
                       <button type="submit" class="btn btn-primary">Submit</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </form>
                   </div>
                   <div class="modal-footer">
+                    <p><span style="color: red">*</span> required field</p>
                   </div>
                 </div>
               </div>
@@ -144,8 +150,8 @@
     <div class="col-md-5" id="habit_list">
       <hr>
       <h4>Overview</h4>
-      
-      <table class="table">
+      {% if habits %}
+      <table class="table table-hover">
         <thead>
           <tr>
             <th scope="col" class="table-dark"></th>
@@ -155,60 +161,75 @@
           </tr>
         </thead>
         <tbody id="habit-table">
-          {% if habits %}
-          {% for habit in habits %}
-          <tr>
-            <th scope="row">{{habit.habit_name}}</th>
-            <td>{{ habit.current_streak }}</td>
-            <td>{{ habit.max_streak }}</td>
+          
+          <tr class="table-secondary" id="daily-row">
+            <th scope="row">Daily</th>
+            <td></td>
+            <td></td>
             <td></td>
           </tr>
+          {% for habit in daily_habits %}
+            <tr>
+              <th scope="row" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
+              <td>{{ habit.current_streak }}</td>
+              <td>{{ habit.max_streak }}</td>
+              <td>{{ habit.records|length }}</td>
+            </tr>
           {% endfor %}
-        </tbody>
+          
 
+            <tr class="table-secondary" id="weekly-row">
+              <th scope="row">Weekly</th>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for habit in weekly_habits %}
+              <tr>
+                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per week">{{habit.habit_name}}</th>
+                <td>{{ habit.current_streak }}</td>
+                <td>{{ habit.max_streak }}</td>
+                <td>{{ habit.records|length }}</td>
+              </tr>
+            {% endfor %}
+
+
+            <tr class="table-secondary" id="monthly-row">
+              <th scope="row">Monthly</th>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for habit in monthly_habits %}
+              <tr>
+                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="left" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
+                <td>{{ habit.current_streak }}</td>
+                <td>{{ habit.max_streak }}</td>
+                <td>{{ habit.records|length }}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
       </table>
       
-
       {% else %}
         <p id="new_habit_prompt">Uh-oh there's no habit yet.
         </p>
       {% endif %}
     </div>
     
-    <!-- <div class="col-md-2" id="record_section"> -->
-    
-
-      
-      <!-- original record form -->
-        <!-- <form action="/create_record" id="record_form">
-          <label for="habit_done">Select habit to record:</label>
-          <select name="habit_done" id="habit_done" required>
-            {% for habit in habits %}
-            <option value="{{habit.habit_id}}">{{habit.habit_name}}</option>
-            {% endfor %}
-          </select>
-          <input type="hidden" name="finished" value="True">
-          <label for="notes">Notes to self:</label>
-          <textarea name="notes" id="notes" cols="20" rows="5"></textarea>
-          <label for="record_date">Record date:</label>
-          <input type="date" name="record_date" id="record_date" required>
-          <button>Save</button>
-        </form> -->
-    <!-- </div> -->
   </div>
 
 </div>
-
-
-<!-- JS script for bootstrap 5 and render calendar with records -->
 
 
 {% endblock %}
 
 
 {% block after_body %}
+<!-- JS script for bootstrap 5 and render calendar with records -->
+
 <script>
-  var recModal = new bootstrap.Modal(document.getElementById('rec_modal'))
+  let recModal = new bootstrap.Modal(document.getElementById('rec_modal'))
 
   document.addEventListener('DOMContentLoaded', function() {
     let calendarEl = document.getElementById('calendar');

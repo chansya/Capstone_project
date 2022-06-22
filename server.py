@@ -1,11 +1,11 @@
 
+from calendar import week
 from unittest import result
 from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime
 import os
 import cloudinary.uploader
-import requests
 from jinja2 import StrictUndefined
 
 app = Flask(__name__)
@@ -96,8 +96,12 @@ def view_progress():
         # populate events list for calendar 
         events = [{'title': f"{record.habit.habit_name.capitalize()}",
                 'start': f"{record.record_date}"} for record in record_lst]
+        daily_habits = Habit.query.filter(Habit.time_period=="daily", Habit.user_id==user.user_id).all()
+        weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
+        monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
 
-        return render_template("progress.html", user=user, habits=habits, events=events)
+        return render_template("progress.html", user=user, habits=habits, events=events,
+                                daily_habits=daily_habits,weekly_habits=weekly_habits, monthly_habits=monthly_habits)
     else:
         return redirect('/')
 
@@ -133,13 +137,15 @@ def create_habit():
     start_date = datetime.strptime(
         request.json.get("start_date"),
         '%Y-%m-%d')
+    reminder = request.json.get("reminder")
     current_streak = 0
     max_streak = 0
     user = User.get_by_email(session.get("user_email"))
 
     # create new habit object in database
     habit = Habit.create(user.user_id, habit_name, frequency,
-                         time_period, current_streak, max_streak, start_date)
+                         time_period, current_streak, max_streak,
+                         start_date, reminder)
     db.session.add(habit)
     db.session.commit()
 

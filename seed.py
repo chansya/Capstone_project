@@ -33,7 +33,7 @@ def load_habits():
     for row in open("data/sample_habits.csv"):
         row_lst = row.rstrip().split("|")
 
-        user_id, habit_name,frequency,time_period,current_streak,max_streak=row_lst[:-2]
+        user_id, habit_name,frequency,time_period,current_streak,max_streak, reminder=row_lst[:-2]
         start_date = datetime.strptime(row_lst[-2], "%Y-%m-%d")
         # parse date if end_date is available, otherwise None
         # if row_lst[-1]!='null':
@@ -41,9 +41,9 @@ def load_habits():
         # else:
         #     end_date = None
         habit = Habit.create(user_id, habit_name,
-                            frequency,time_period,
-                            current_streak,max_streak,
-                            start_date)
+                            frequency, time_period,
+                            current_streak, max_streak,
+                            start_date, reminder)
         db.session.add(habit)
 
     db.session.commit()

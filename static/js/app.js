@@ -8,7 +8,8 @@ habitForm.addEventListener('submit',(evt)=>{
         habit_name : document.querySelector('#habit_name').value,
         frequency : document.querySelector('#frequency').value,
         time_period : document.querySelector('#time_period').value,
-        start_date : document.querySelector('#start_date').value
+        start_date : document.querySelector('#start_date').value,
+        reminder : document.querySelector('#reminder').value
     }
     console.log(formInput)
     // send AJAX post request to add new record to database
@@ -23,14 +24,33 @@ habitForm.addEventListener('submit',(evt)=>{
         .then(habitData=>{
             let prompt = document.querySelector('#new_habit_prompt');
             if(prompt){prompt.remove();}
-        
-            document.querySelector('#habit-table').insertAdjacentHTML('beforeend', 
+            
+            if(habitData.time_period==="daily"){
+                document.querySelector('#daily-row').insertAdjacentHTML('afterend', 
             `<tr>
-            <th scope="row">${habitData.habit_name}</th>
-            <td>${habitData.current_streak}</td>
-            <td>${habitData.max_streak}</td>
-            <td></td>
+                <th scope="row">${habitData.habit_name}</th>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
             </tr>`);
+            } else if(habitData.time_period==="weekly"){
+                document.querySelector('#weekly-row').insertAdjacentHTML('afterend', 
+            `<tr>
+                <th scope="row">${habitData.habit_name}</th>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>`);
+            } else if(habitData.time_period==="monthly"){
+                document.querySelector('#monthly-row').insertAdjacentHTML('afterend', 
+            `<tr>
+                <th scope="row">${habitData.habit_name}</th>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>`);
+            }
+            
 
             // add new habit in the select menu for record
             document.querySelector('#log-habit').insertAdjacentHTML('beforeend',

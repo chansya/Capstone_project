@@ -35,7 +35,8 @@
     {% if habits %}
         <ul>
             {% for habit in habits %}
-                <li>{{ habit.habit_name }} ({{ habit.frequency}} times {{ habit.time_period }})</li>
+                <li>{{ habit.habit_name }} ({{ habit.frequency}} time(s) {{ habit.time_period }})</li>
+                <p>Personal Reminder: {{ habit.reminder }}</p>
                 <a href="/{{habit.habit_id}}/records">Check habit log</a>
                 <a href="/{{habit.habit_id}}/remove_habit"
                 onclick="return confirm('Are you sure to remove this habit? All records will be removed too.')">
