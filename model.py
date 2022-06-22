@@ -204,7 +204,6 @@ class Habit(db.Model):
                 curr_month_start = last_month_start
                 curr_month_end = last_month_end
 
-
     @classmethod
     def update_max_streak(cls, habit_id):
         """ Update the highest streak. """
