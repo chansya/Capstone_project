@@ -44,9 +44,9 @@
                         <input type="number" name="frequency" class="form-control" id="frequency" min="1" required> 
                         <span>Time(s)</span>
                         <select name="time_period" class="form-control" id="time_period" required>
-                          <option value="per day">Per Day</option>
-                          <option value="per week">Per Week</option>
-                          <option value="per month">Per Month</option>
+                          <option value="daily">Per Day</option>
+                          <option value="weekly">Per Week</option>
+                          <option value="monthly">Per Month</option>
                         </select>
                       </div>
 
@@ -55,7 +55,7 @@
                         <input type="date" name="start_date" class="form-control" id="start_date" required>
                       </div>
 
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="submit" data-bs-dismiss="modal" class="btn btn-primary">Submit</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </form>
                   </div>
@@ -142,7 +142,7 @@
     <div class="col-md-5" id="habit_list">
       <hr>
       <h4>Overview</h4>
-      {% if habits %}
+      
       <table class="table">
         <thead>
           <tr>
@@ -152,12 +152,14 @@
             <th scope="col" class="table-dark">Total Record</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="habit-table">
+          {% if habits %}
           {% for habit in habits %}
           <tr>
             <th scope="row">{{habit.habit_name}}</th>
-            <td>{{ habit.current_streak}}</td>
-            <td>{{ habit.max_streak}}</td>
+            <td>{{ habit.current_streak }}</td>
+            <td>{{ habit.max_streak }}</td>
+            <td></td>
           </tr>
           {% endfor %}
         </tbody>

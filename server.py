@@ -82,17 +82,20 @@ def view_progress():
     """View the progress page."""
     user = User.get_by_email(session["user_email"])
     if user:
-        habits = Habit.get_by_user(user.user_id)
 
+        habits = Habit.get_by_user(user.user_id)
+        
         # loop over habit list to generate record list
         record_lst = []
         for habit in habits:
             records = Record.get_by_habit(habit.habit_id)
             record_lst += records
+            Habit.update_curr_streak(habit.habit_id)
 
+        # populate events list for calendar 
         events = [{'title': f"{record.habit.habit_name.capitalize()}",
                 'start': f"{record.record_date}"} for record in record_lst]
-    
+
         return render_template("progress.html", user=user, habits=habits, events=events)
     else:
         return redirect('/')
@@ -202,6 +205,9 @@ def create_modal_record():
     db.session.add(record)
     db.session.commit()
     
+    # update streak based on record
+    Habit.update_curr_streak(habit_id)
+    Habit.update_max_streak(habit_id)
     # Create badges according to number of records
     user = User.get_by_email(session["user_email"])
     habits = Habit.get_by_user(user.user_id)

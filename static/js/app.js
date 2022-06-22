@@ -39,11 +39,19 @@ habitForm.addEventListener('submit',(evt)=>{
             if(prompt){prompt.remove();}
         
             // add new habit under My habits
-            document.querySelector('#habit_list').insertAdjacentHTML('beforeend', 
-            `<p>${habitData.habit_name} (${habitData.frequency} times ${habitData.time_period})</p>
-            <p id="curr_for_${habitData.habit_id}">Current streak: ${habitData.current_streak}</p>
-            <p id="max_for_${habitData.habit_id}">Longest streak: ${habitData.max_streak}</p>
-            <hr>`);
+            // document.querySelector('#habit_list').insertAdjacentHTML('beforeend', 
+            // `<p>${habitData.habit_name} (${habitData.frequency} times ${habitData.time_period})</p>
+            // <p id="curr_for_${habitData.habit_id}">Current streak: ${habitData.current_streak}</p>
+            // <p id="max_for_${habitData.habit_id}">Longest streak: ${habitData.max_streak}</p>
+            // <hr>`);
+            document.querySelector('#habit-table').insertAdjacentHTML('beforeend', 
+            `<tr>
+            <th scope="row">${habitData.habit_name}</th>
+            <td>${habitData.current_streak}</td>
+            <td>${habitData.max_streak}</td>
+            <td></td>
+            </tr>`);
+            // 
 
             // add new habit in the select menu for record
             document.querySelector('#modal-habit').insertAdjacentHTML('beforeend',

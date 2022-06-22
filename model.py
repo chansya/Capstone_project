@@ -1,6 +1,6 @@
 """ Models for habit building app. """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from email import message
 from flask_sqlalchemy import SQLAlchemy
 
@@ -101,14 +101,55 @@ class Habit(db.Model):
 
     @classmethod
     def update_curr_streak(cls, habit_id):
-        """ Increment current streak by one when user creates a record."""
         habit = cls.query.get(habit_id)
-        habit.current_streak = habit.current_streak + 1
+        
+        today = datetime.today().date()
+
+        # for daily
+        if habit.time_period == "daily":
+            # start from today and count streak going back one day at a time
+            habit.current_streak = 0
+            # if goal is reached today, update curr streak to 1
+            rec_today = Record.query.filter(Record.habit_id==habit_id, Record.record_date==today).all()
+            if len(rec_today) == habit.frequency:
+                habit.current_streak = 1
+            
+            yesterday = today - timedelta(days=1)
+
+            rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
+
+            while rec_ytd != None:
+                yesterday = today - timedelta(days=1)
+                rec_ytd = Record.query.filter(Record.habit_id==habit_id, Record.record_date==yesterday).all()
+
+                # if total record from yesterday < frequency set:
+                if len(rec_ytd) >= habit.frequency:
+                    # reset current streak to zero
+                    habit.current_streak += 1
+                else:
+                    break
+                today = yesterday
+        
+    # @classmethod
+    # def update_curr_streak(cls, habit_id):
+    #     """ Increment current streak by one when user creates a record."""
+    #     habit = cls.query.get(habit_id)
+    #     today = datetime.today().date()
+    #     print("***************")
+    #     print(today)
+    #     print(habit.current_streak)
+    #     # for daily goal
+    #     if habit.time_period == "daily":
+    #         rec_today = Record.query.filter(Record.habit_id==habit_id, Record.record_date==today).all()
+    #         if len(rec_today) == habit.frequency:
+    #             habit.current_streak = habit.current_streak + 1
 
     @classmethod
     def update_max_streak(cls, habit_id):
         """ Update the highest streak. """
         habit = cls.query.get(habit_id)
+        print("^^^^^^^^^^^^^^^^^^^^")
+        print(habit.max_streak)
         if habit.current_streak > habit.max_streak:
             habit.max_streak = habit.current_streak
 
