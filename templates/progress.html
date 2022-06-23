@@ -35,15 +35,15 @@
                   </div>
                   <div class="modal-body">
                     <form action="/create_habit" method="POST" id="new_habit_form">
-                      <div class="mb-3">
-                        <label for="habit_name" class="form-label">Name</label>
+                      <div class="mb-2">
+                        <label for="habit_name" class="form-label">Name<span style="color: red">*</span></label>
                         <input type="text" name="habit_name" class="form-control" id="habit_name" required>
                       </div>
 
-                      <div class="mb-3">
-                        <label for="frequency" class="form-label">Frequency</label>
+                      <div class="mb-2">
+                        <label for="frequency" class="form-label">Frequency<span style="color: red">*</span></label>
                         <input type="number" name="frequency" class="form-control" id="frequency" min="1" required> 
-                        <span>Time(s)</span>
+                        <span>Time(s)<span style="color: red">*</span></span>
                         <select name="time_period" class="form-control" id="time_period" required>
                           <option value="daily">Per Day</option>
                           <option value="weekly">Per Week</option>
@@ -51,12 +51,12 @@
                         </select>
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-2">
                         <label for="start_date" class="form-label">Start Date</label>
                         <input type="date" name="start_date" class="form-control" id="start_date" required>
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-2">
                         <label for="reminder" class="form-label">Message To Future Self</label>
                         <textarea name="reminder" id="reminder" cols="50" rows="3" 
                         placeholder="E.g. Keep trying! You'll get it right!"></textarea>
@@ -67,6 +67,7 @@
                     </form>
                   </div>
                   <div class="modal-footer">
+                    <p><span style="color: red">*</span>required field</p>
                   </div>
                 </div>
               </div>
@@ -170,7 +171,7 @@
           </tr>
           {% for habit in daily_habits %}
             <tr>
-              <th scope="row" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
+              <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
               <td>{{ habit.current_streak }}</td>
               <td>{{ habit.max_streak }}</td>
               <td>{{ habit.records|length }}</td>
@@ -202,7 +203,7 @@
             </tr>
             {% for habit in monthly_habits %}
               <tr>
-                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="left" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
+                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
                 <td>{{ habit.current_streak }}</td>
                 <td>{{ habit.max_streak }}</td>
                 <td>{{ habit.records|length }}</td>
@@ -220,14 +221,11 @@
   </div>
 
 </div>
-
-
 {% endblock %}
 
 
 {% block after_body %}
 <!-- JS script for bootstrap 5 and render calendar with records -->
-
 <script>
   let recModal = new bootstrap.Modal(document.getElementById('rec_modal'))
 
