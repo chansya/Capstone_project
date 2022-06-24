@@ -146,6 +146,21 @@
     </div>
 </nav>
 
+{% for msg in get_flashed_messages() %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="liveToast">
+    <div class="toast-header">
+      <img src="static/img/blueCircle.png" width="14px" class="rounded me-2" alt="blue-circle">
+      <strong class="me-auto">Notification</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      {{ msg }}
+    </div>
+  </div>
+</div>
+  
+{% endfor %}
 
 <div class="container">
   
@@ -157,7 +172,8 @@
     
     <div class="col-md-5" id="habit_list">
       
-      <h4>Overview</h4>
+      <h4>Overview </h4> 
+      <button type="button" class="btn btn-secondary btn-sm" id="show-chart">See Chart</button>
       <table class="table table-hover">
         <thead>
           <tr>
@@ -220,7 +236,7 @@
     </div>
     
   </div>
-<div id="habit-chart">
+<div id="habit-chart" style="display: none">
   <h4>Charts</h4>
   <canvas id="multi-line"></canvas>
 </div>

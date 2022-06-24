@@ -1,8 +1,7 @@
 'use strict';
 
-const habitForm = document.querySelector('#new_habit_form');
-
 // send AJAX post request when user submits the new habit form 
+const habitForm = document.querySelector('#new_habit_form');
 habitForm.addEventListener('submit',(evt)=>{
     evt.preventDefault();
 
@@ -148,35 +147,27 @@ fetch('/chart_data.json')
 
     );
 
+// show chart upon button click
+const chartBtn = document.querySelector('#show-chart')
+const chart = document.querySelector('#habit-chart')
+chartBtn.addEventListener('click', ()=>{
+    if (chartBtn.textContent ==="See Chart"){
+        chartBtn.textContent ="Hide Chart";
+    } else {
+        chartBtn.textContent ="See Chart";
+    }
 
-fetch('/notifcation.json')
-    .then((response) => response.json())
-    .then((missedHabitData) =>{
-        console.log(missedHabitData)
-        // for(const missedHabit in missedHabitData){
-        //     document.querySelector('.toast-container').insertAdjacentHTML('beforeend',
-        //     `<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        //     <div class="toast-header">
-        //       <img src="..." class="rounded me-2" alt="...">
-        //       <strong class="me-auto">Bootstrap</strong>
-        //       <small>11 mins ago</small>
-        //       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        //     </div>
-        //     <div class="toast-body">
-        //       Hello, world! This is a toast message.
-        //     </div>
-        //   </div>`)
-        // }
-        
+    if (chart.style.display === "none") {
+        chart.style.display = "block";
+      } else {
+        chart.style.display = "none";
+      }
+})
 
-        
-    })
-
-
-// window.onload = (event)=>{
-//     let toast = document.querySelector('.toast')
-
-//      let toastAlert = new bootstrap.Toast(toast);
-//     toastAlert.show()
-// }
-
+window.onload = (event) => {
+    let myAlert = document.querySelectorAll('.toast')[0];
+    if (myAlert) {
+      let bsAlert = new bootstrap.Toast(myAlert);
+      bsAlert.show();
+    }
+  };
