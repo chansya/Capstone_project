@@ -76,61 +76,70 @@ let logDate = document.querySelector('#log-date')
 logDate.max = new Date().toLocaleDateString('en-ca')
 
 
-// make AJAX calls to get data to construct the charts
+// make multiple lines in one chart
 fetch('/daily_habit.json')
-  .then((response) => response.json())
-  .then((responseJson) => {
-    console.log('JSON response:')
-    console.log(responseJson)
-    for(const [habit_id, daily_records] of Object.entries(responseJson)){
-        console.log(habit_id)
-        console.log(daily_records)
-        
-        const data = daily_records.map((dailyTotal) => ({
-            x: dailyTotal.date,
-            y: dailyTotal.times_done,
-          }));
-        console.log(data)
+    .then((response) => response.json())
+    .then((responseJson) => {
+    // console.log('JSON response:')
+    // console.log(responseJson)
+        let dataArr = []
+        for(const [habit_id, daily_records] of Object.entries(responseJson)){
+            // console.log(habit_id)
+            // console.log(daily_records)
+            
+            const data = daily_records.map((dailyTotal) => ({
+                x: dailyTotal.date,
+                y: dailyTotal.times_done,
+                }));
+            // console.log(data)
+            dataArr.push(data)}
+        console.log("List of Data Arrays")
+        console.log(dataArr)
 
-        document.querySelector('#habit-chart')
-                .insertAdjacentHTML('beforeend',
-                    `<div class="row">
-                        <div class="col-6">
-                        
-                            <div>
-                                <canvas id="habit${habit_id}"></canvas>
-                            </div>
-                        </div>
-                    </div>`)
-          new Chart(document.querySelector(`#habit${habit_id}`), {
-            type: 'line',
-            data: {
-              datasets: [
-                {
-                  label: 'Times Done',
-                  backgroundColor: 'rgb(255, 99, 132)',
-                  borderColor: 'rgb(255, 99, 132)',
-                  data, // equivalent to data: data
-                },
-              ],
-            },
-            options: {
-              scales: {
-                x: {
-                  type: 'time',
-                  time: {
-                    
-                    tooltipFormat: 'LLLL dd', // Luxon format string
-                    unit: 'day',
-                  },
-                },
-              },
-            },
-          });
-    }
-    
-  });
+        let dataSet=[]
+        for(let i=0; i<dataArr.length; i++){
+            dataSet.push({
+                label: `Habit${i+1}`,
+                // backgroundColor: getRandomColor(),
+                borderColor: getRandomColor(),
+                data: dataArr[i]
+            })
+            console.log("Inside for loop")
+            console.log(dataArr[i])
+        }
+        console.log(dataSet)
 
+            
+        new Chart(document.querySelector('#multi-line'), {
+        type: 'line',
+        data: {
+            datasets: dataSet,
+        },
+        options: {
+            scales: {
+            x: {
+                type: 'time',
+                time: {
+                
+                tooltipFormat: 'LLLL dd', // Luxon format string
+                unit: 'day',
+                },
+            },
+            },
+        },
+        });
+        }
+
+    );
+
+function getRandomColor(){
+    const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+    const r = randomBetween(0, 255);
+    const g = randomBetween(0, 255);
+    const b = randomBetween(0, 255);
+    const rgb = `rgb(${r},${g},${b})`;
+    return rgb;
+}
 // confetti
 // var myCanvas = document.createElement('canvas');
 // document.body.appendChild(myCanvas);

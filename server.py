@@ -335,7 +335,7 @@ def get_daily_habit_data():
         print('*************')
         print(daily_record_data)
 
-        daily_habit_dict[habit.habit_id] = daily_record_data
+        daily_habit_dict[habit.habit_name] = daily_record_data
         print('#############')
         
 
