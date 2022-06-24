@@ -215,7 +215,6 @@ class Habit(db.Model):
         # list of records order by date 
         records = Record.query.filter(Record.habit_id==habit_id).order_by(Record.record_date.desc()).all()
        
-        max_streak =0
         # FOR DAILY GOAL
         if habit.time_period == "daily":
             current_streak = 0
@@ -226,13 +225,14 @@ class Habit(db.Model):
                 # if the day has not been checked yet
                 if record.record_date not in checked_date:
                     # if goal is met for this day
-                    if len(Record.query.filter(Record.habit_id==habit.habit_id, Record.record_date==record.record_date).all()) >= habit.frequency:
+                    if len(Record.query.filter(Record.habit_id==habit.habit_id,
+                                            Record.record_date==record.record_date).all()) >= habit.frequency:
                         
                         previous_day = record.record_date - timedelta(days=1)
                         # print(f"Previous day:{previous_day}")
                         # if the goal is met for previous day, continue the streak 
                         if len(Record.query.filter(Record.habit_id==habit.habit_id,
-                                            Record.record_date==previous_day).all()) >= habit.frequency:
+                                                Record.record_date==previous_day).all()) >= habit.frequency:
                             current_streak += 1
                             checked_date.append(record.record_date)
                             # print(f"Checked Date:{checked_date}")
@@ -279,15 +279,15 @@ class Habit(db.Model):
                     # if goal is met for this week
                     curr_week_start = record.record_date - timedelta(days=record.record_date.weekday())
                     curr_week_end = curr_week_start + timedelta(days=6)
-                    print("***************")
-                    print(f"Current week:{curr_week_start}-{curr_week_end}")
+                    # print("***************")
+                    # print(f"Current week:{curr_week_start}-{curr_week_end}")
                     if len(Record.query.filter(Record.habit_id==habit_id, 
                                                Record.record_date>=curr_week_start,
                                                Record.record_date<=curr_week_end).all()) >= habit.frequency:
                         
                         last_week_start = curr_week_start - timedelta(days=7)
                         last_week_end = curr_week_end - timedelta(days=7)
-                        print(f"Last week:{last_week_start}-{last_week_end}")
+                        # print(f"Last week:{last_week_start}-{last_week_end}")
                         # if the goal is met for last week, continue the streak 
                         if len(Record.query.filter(Record.habit_id==habit.habit_id,
                                                    Record.record_date>=last_week_start,
@@ -295,37 +295,37 @@ class Habit(db.Model):
                             current_streak += 1
                             # update cutoff date
                             cutoff_date = last_week_end
-                            print(f"Cutoff Date:{cutoff_date}")
+                            # print(f"Cutoff Date:{cutoff_date}")
 
                             if current_streak > max_streak: 
                                 max_streak=current_streak
                             
-                            print(f"Current streak:{current_streak}")
-                            print(f"Max streak:${max_streak}")
-                            print("*************************")
+                            # print(f"Current streak:{current_streak}")
+                            # print(f"Max streak:${max_streak}")
+                            # print("*************************")
                         
                         # otherwise if goal is not met in previous week, increase current streak by 1 and update max streak
                         # then break streak and reset current streak to 0
                         else:
                             current_streak += 1
                             cutoff_date = last_week_end
-                            print(f"Cutoff Date:{cutoff_date}")
-                            print(f"Current streak:{current_streak}")
+                            # print(f"Cutoff Date:{cutoff_date}")
+                            # print(f"Current streak:{current_streak}")
                             if current_streak > max_streak: 
                                 max_streak=current_streak
-                            print("Goal not met on previous week, streak broken and reset to 0")
+                            # print("Goal not met on previous week, streak broken and reset to 0")
                             current_streak=0
                             
                     # if goal not met for this day, reset current streak to 0 
                     else: 
-                        print("Goal not met on this week, search previous week")
+                        # print("Goal not met on this week, search previous week")
                         current_streak = 0
                     
                 # if the day has already been checked, then onto next record 
                 else:
-                    print("**********************")
-                    print(f"current_rec:{record.record_date}")
-                    print("This week already checked!")
+                    # print("**********************")
+                    # print(f"current_rec:{record.record_date}")
+                    # print("This week already checked!")
                     continue
 
          # FOR WEEKLY GOAL
@@ -340,11 +340,11 @@ class Habit(db.Model):
                     # if goal is met for this month
                    
                     dt = pendulum.from_format(str(record.record_date), 'YYYY-MM-DD')
-                    print(f"Current record date:{dt}")
+                    # print(f"Current record date:{dt}")
                     curr_month_start = dt.start_of("month").date()
                     curr_month_end = dt.end_of("month").date()
-                    print("***************")
-                    print(f"Current month:{curr_month_start} to {curr_month_end}")
+                    # print("***************")
+                    # print(f"Current month:{curr_month_start} to {curr_month_end}")
                     if len(Record.query.filter(Record.habit_id==habit_id, 
                                                Record.record_date>=curr_month_start,
                                                Record.record_date<=curr_month_end).all()) >= habit.frequency:
@@ -355,7 +355,7 @@ class Habit(db.Model):
                         last_month_end_dt = pendulum.from_format(str(last_month_end), 'YYYY-MM-DD')
 
                         last_month_start = last_month_end_dt.start_of("month").date()
-                        print(f"Last month:{last_month_start}-{last_month_end}")
+                        # print(f"Last month:{last_month_start}-{last_month_end}")
                         # if the goal is met for last week, continue the streak 
                         if len(Record.query.filter(Record.habit_id==habit.habit_id,
                                                    Record.record_date>=last_month_start,
@@ -363,48 +363,45 @@ class Habit(db.Model):
                             current_streak += 1
                             # update cutoff date
                             cutoff_date = last_month_end
-                            print(f"Cutoff Date:{cutoff_date}")
+                            # print(f"Cutoff Date:{cutoff_date}")
 
                             if current_streak > max_streak: 
                                 max_streak=current_streak
                             
-                            print(f"Current streak:{current_streak}")
-                            print(f"Max streak:${max_streak}")
-                            print("*************************")
+                            # print(f"Current streak:{current_streak}")
+                            # print(f"Max streak:${max_streak}")
+                            # print("*************************")
                         
                         # otherwise if goal is not met in previous week, increase current streak by 1 and update max streak
                         # then break streak and reset current streak to 0
                         else:
                             current_streak += 1
                             cutoff_date = last_month_end
-                            print(f"Cutoff Date:{cutoff_date}")
-                            print(f"Current streak:{current_streak}")
+                            # print(f"Cutoff Date:{cutoff_date}")
+                            # print(f"Current streak:{current_streak}")
                             if current_streak > max_streak: 
                                 max_streak=current_streak
-                            print("Goal not met on previous month, streak broken and reset to 0")
+                            # print("Goal not met on previous month, streak broken and reset to 0")
                             current_streak=0
                             
                     # if goal not met for this day, reset current streak to 0 
                     else: 
-                        print("Goal not met on this month, search previous month")
+                        # print("Goal not met on this month, search previous month")
                         current_streak = 0
                     
                 # if the day has already been checked, then onto next record 
                 else:
-                    print("**********************")
-                    print(f"current_rec:{record.record_date}")
-                    print("This month already checked!")
+                    # print("**********************")
+                    # print(f"current_rec:{record.record_date}")
+                    # print("This month already checked!")
                     continue
 
-        
-        
+             
         # update max streak attribute 
         if max_streak > habit.max_streak:
             habit.max_streak = max_streak
            
         
-        
-
     @classmethod
     def count_habit_by_user(cls, user_id):
             """Return the count of habits for a specific user."""

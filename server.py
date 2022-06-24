@@ -3,7 +3,7 @@ from calendar import week
 from unittest import result
 from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import cloudinary.uploader
 from jinja2 import StrictUndefined
@@ -300,6 +300,47 @@ def view_badges():
     badges = Badge.get_by_user(user.user_id)
     return render_template("all_badges.html", user=user, badges=badges)
 
+
+@app.route("/daily_habit.json")
+def get_daily_habit_data():
+    """Get daily habit data as JSON."""
+
+    # get user
+    user = User.get_by_email(session.get("user_email"))
+    habits = Habit.get_by_user(user.user_id)
+    # get habit id list
+    
+    daily_habit_dict = {}
+    #  dict={'habit id': daily_record_data}
+    # for loop to go through each habit, make dict of habit
+    for habit in habits:
+   
+        daily_record_data = []
+        counted_days=[]
+        # list of all records sorted by date
+        records = Record.query.filter(Record.habit_id==habit.habit_id).order_by(Record.record_date.desc()).all()
+        print('^^^^^^^^^^^^^')
+        print(records)
+        # loop over records to generate dictionary ro append to json data list
+        for record in records:
+            if record.record_date not in counted_days:
+                # count number of times done
+                times_done = Record.query.filter(Record.habit_id==habit.habit_id,
+                                                Record.record_date== record.record_date).count()
+                # dictionary for each record date
+                daily_record_data.append({'date': record.record_date.isoformat(),
+                                        'times_done':times_done})
+                # to avoid duplicate dates
+                counted_days.append(record.record_date)
+        print('*************')
+        print(daily_record_data)
+
+        daily_habit_dict[habit.habit_id] = daily_record_data
+        print('#############')
+        
+
+    print(daily_habit_dict)
+    return jsonify(daily_habit_dict)
 
 @app.route("/logout")
 def process_logout():

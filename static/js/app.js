@@ -1,3 +1,5 @@
+'use strict';
+
 const habitForm = document.querySelector('#new_habit_form');
 
 // send AJAX post request when user submits the new habit form
@@ -22,8 +24,8 @@ habitForm.addEventListener('submit',(evt)=>{
     })
         .then(response => response.json())
         .then(habitData=>{
-            let prompt = document.querySelector('#new_habit_prompt');
-            if(prompt){prompt.remove();}
+            // let prompt = document.querySelector('#new_habit_prompt');
+            // if(prompt){prompt.remove();}
             
             if(habitData.time_period==="daily"){
                 document.querySelector('#daily-row').insertAdjacentHTML('afterend', 
@@ -56,8 +58,11 @@ habitForm.addEventListener('submit',(evt)=>{
             document.querySelector('#log-habit').insertAdjacentHTML('beforeend',
             `<option value="${habitData.habit_id}">${habitData.habit_name}</option>`
             )
+
+            
         })
 })
+
 
 // for tooltip when mouse hovers over badges
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -65,7 +70,79 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+
 // set max day of input date in record form to today
 let logDate = document.querySelector('#log-date')
 logDate.max = new Date().toLocaleDateString('en-ca')
 
+
+// make AJAX calls to get data to construct the charts
+fetch('/daily_habit.json')
+  .then((response) => response.json())
+  .then((responseJson) => {
+    console.log('JSON response:')
+    console.log(responseJson)
+    for(const [habit_id, daily_records] of Object.entries(responseJson)){
+        console.log(habit_id)
+        console.log(daily_records)
+        
+        const data = daily_records.map((dailyTotal) => ({
+            x: dailyTotal.date,
+            y: dailyTotal.times_done,
+          }));
+        console.log(data)
+
+        document.querySelector('#habit-chart')
+                .insertAdjacentHTML('beforeend',
+                    `<div class="row">
+                        <div class="col-6">
+                        
+                            <div>
+                                <canvas id="habit${habit_id}"></canvas>
+                            </div>
+                        </div>
+                    </div>`)
+          new Chart(document.querySelector(`#habit${habit_id}`), {
+            type: 'line',
+            data: {
+              datasets: [
+                {
+                  label: 'Times Done',
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data, // equivalent to data: data
+                },
+              ],
+            },
+            options: {
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    
+                    tooltipFormat: 'LLLL dd', // Luxon format string
+                    unit: 'day',
+                  },
+                },
+              },
+            },
+          });
+    }
+    
+  });
+
+// confetti
+// var myCanvas = document.createElement('canvas');
+// document.body.appendChild(myCanvas);
+
+// var myConfetti = confetti.create(myCanvas, {
+//   resize: true,
+//   useWorker: true
+// });
+// myConfetti({
+//   particleCount: 150,
+//   spread: 180
+//   // any other options from the global
+//   // confetti function
+// });
+// confetti();
