@@ -2,7 +2,7 @@
 
 const habitForm = document.querySelector('#new_habit_form');
 
-// send AJAX post request when user submits the new habit form
+// send AJAX post request when user submits the new habit form 
 habitForm.addEventListener('submit',(evt)=>{
     evt.preventDefault();
 
@@ -148,26 +148,35 @@ fetch('/chart_data.json')
 
     );
 
-function getRandomColor(){
-    const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
-    const r = randomBetween(0, 255);
-    const g = randomBetween(0, 255);
-    const b = randomBetween(0, 255);
-    const rgb = `rgb(${r},${g},${b})`;
-    return rgb;
-}
-// confetti
-// var myCanvas = document.createElement('canvas');
-// document.body.appendChild(myCanvas);
 
-// var myConfetti = confetti.create(myCanvas, {
-//   resize: true,
-//   useWorker: true
-// });
-// myConfetti({
-//   particleCount: 150,
-//   spread: 180
-//   // any other options from the global
-//   // confetti function
-// });
-// confetti();
+fetch('/notifcation.json')
+    .then((response) => response.json())
+    .then((missedHabitData) =>{
+        console.log(missedHabitData)
+        // for(const missedHabit in missedHabitData){
+        //     document.querySelector('.toast-container').insertAdjacentHTML('beforeend',
+        //     `<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        //     <div class="toast-header">
+        //       <img src="..." class="rounded me-2" alt="...">
+        //       <strong class="me-auto">Bootstrap</strong>
+        //       <small>11 mins ago</small>
+        //       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        //     </div>
+        //     <div class="toast-body">
+        //       Hello, world! This is a toast message.
+        //     </div>
+        //   </div>`)
+        // }
+        
+
+        
+    })
+
+
+// window.onload = (event)=>{
+//     let toast = document.querySelector('.toast')
+
+//      let toastAlert = new bootstrap.Toast(toast);
+//     toastAlert.show()
+// }
+

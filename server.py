@@ -1,5 +1,6 @@
 
 from calendar import week
+from math import remainder
 from unittest import result
 from flask import Flask, jsonify, render_template, render_template_string, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
@@ -18,6 +19,7 @@ CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
 CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
 CLOUD_NAME = "habittracking"
 
+first_time=True
 
 @app.route("/")
 def index():
@@ -39,10 +41,22 @@ def login():
         user = User.get_by_email(email)
         # if login fail, redirect back to login with error message
         if not user or user.password != password:
-            error = "Invalid email/password. Please try again."
+            error = "Invalid credentials. Please try again."
         
         session["user_email"] = user.email
         session.modified = True
+        # Check for missed entries 
+        user = User.get_by_email(session["user_email"])
+        habits = Habit.get_by_user(user.user_id)
+        
+        missed_entries = ""
+        for habit in habits:
+            Habit.update_curr_streak(habit.habit_id)
+            if habit.current_streak==0 and Record.query.filter(Record.habit_id==habit.habit_id).count()>0:
+                missed_entries+= f" {habit.habit_name}, "
+        # Create flash message reminder
+        if missed_entries != "":
+            flash(f"There seems to be missed entries for {missed_entries} did you forget to log it?")
         return redirect("/progress")
 
     return render_template('login.html', error=error)
@@ -82,9 +96,8 @@ def view_progress():
     """View the progress page."""
     user = User.get_by_email(session["user_email"])
     if user:
-
-        habits = Habit.get_by_user(user.user_id)
         
+        habits = Habit.get_by_user(user.user_id)
         # loop over habit list to generate record list
         record_lst = []
         for habit in habits:
@@ -100,30 +113,12 @@ def view_progress():
         weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
         monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
 
+
         return render_template("progress.html", user=user, habits=habits, events=events,
                                 daily_habits=daily_habits,weekly_habits=weekly_habits, monthly_habits=monthly_habits)
     else:
         return redirect('/')
 
-
-@app.route("/calendar")
-def view_calendar():
-    """View the calendar page."""
-
-    # get list of habits for user
-    user = User.get_by_email(session.get("user_email"))
-    habits = Habit.get_by_user(user.user_id)
-
-    # loop over habit list to generate record list
-    record_lst = []
-    for habit in habits:
-        records = Record.get_by_habit(habit.habit_id)
-        record_lst += records
-
-    events = [{'title': f"{record.habit.habit_name.capitalize()}",
-                'start': f"{record.record_date}"} for record in record_lst]
-    
-    return render_template("calendar.html", events=events)
 
 
 @app.route("/create_habit", methods=["POST"])
@@ -302,7 +297,7 @@ def view_badges():
 
 
 @app.route("/chart_data.json")
-def get_daily_habit_data():
+def get_chart_data():
     """Get daily habit data as JSON."""
 
     # get user
@@ -336,6 +331,7 @@ def get_daily_habit_data():
         daily_habit_dict[habit.habit_name] = daily_record_data
      
     return jsonify(daily_habit_dict)
+
 
 @app.route("/logout")
 def process_logout():
