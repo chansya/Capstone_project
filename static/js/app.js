@@ -76,55 +76,71 @@ let logDate = document.querySelector('#log-date')
 logDate.max = new Date().toLocaleDateString('en-ca')
 
 
-// make multiple lines in one chart
-fetch('/daily_habit.json')
+// make AJAX to get habit data, then create chart with multiple datasets
+fetch('/chart_data.json')
     .then((response) => response.json())
     .then((responseJson) => {
-    // console.log('JSON response:')
-    // console.log(responseJson)
+        // create an array of objects with habit name as key and list of records as value
         let dataArr = []
-        for(const [habit_id, daily_records] of Object.entries(responseJson)){
-            // console.log(habit_id)
-            // console.log(daily_records)
-            
+        for(const [habit_name, daily_records] of Object.entries(responseJson)){
+
             const data = daily_records.map((dailyTotal) => ({
                 x: dailyTotal.date,
                 y: dailyTotal.times_done,
                 }));
-            // console.log(data)
-            dataArr.push(data)}
-        console.log("List of Data Arrays")
-        console.log(dataArr)
 
-        let dataSet=[]
-        for(let i=0; i<dataArr.length; i++){
-            dataSet.push({
-                label: `Habit${i+1}`,
-                // backgroundColor: getRandomColor(),
-                borderColor: getRandomColor(),
-                data: dataArr[i]
-            })
-            console.log("Inside for loop")
-            console.log(dataArr[i])
+            let data_dict = {}
+            data_dict[habit_name] = data
+            dataArr.push(data_dict);
         }
-        console.log(dataSet)
+        // create array of datasets 
+        let dataSet=[]
+        let colors = ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
+        '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
 
-            
+        for(let i=0; i<dataArr.length; i++){
+            let name = Object.keys(dataArr[i])[0]
+            let data = dataArr[i][name]
+            dataSet.push({
+                label: name,
+                backgroundColor: colors[i],
+                borderColor: colors[i],
+                data: data
+            })
+        }
+
+        // create and configure chart 
         new Chart(document.querySelector('#multi-line'), {
-        type: 'line',
+        type: 'bar',
         data: {
             datasets: dataSet,
         },
         options: {
+            responsive: true,
             scales: {
             x: {
+                title:{
+                    display: true,
+                    text: "Date"
+                },
                 type: 'time',
                 time: {
                 
                 tooltipFormat: 'LLLL dd', // Luxon format string
-                unit: 'day',
+                unit: 'week',
                 },
             },
+            y: {
+                title: {
+                  display: true,
+                  text: 'Times Done'
+                },
+                min: 0,
+                suggestedMax: 3,
+                ticks: {
+                  stepSize: 1
+                }
+              }
             },
         },
         });

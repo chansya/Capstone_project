@@ -301,7 +301,7 @@ def view_badges():
     return render_template("all_badges.html", user=user, badges=badges)
 
 
-@app.route("/daily_habit.json")
+@app.route("/chart_data.json")
 def get_daily_habit_data():
     """Get daily habit data as JSON."""
 
@@ -311,7 +311,7 @@ def get_daily_habit_data():
     # get habit id list
     
     daily_habit_dict = {}
-    #  dict={'habit id': daily_record_data}
+
     # for loop to go through each habit, make dict of habit
     for habit in habits:
    
@@ -319,8 +319,7 @@ def get_daily_habit_data():
         counted_days=[]
         # list of all records sorted by date
         records = Record.query.filter(Record.habit_id==habit.habit_id).order_by(Record.record_date.desc()).all()
-        print('^^^^^^^^^^^^^')
-        print(records)
+
         # loop over records to generate dictionary ro append to json data list
         for record in records:
             if record.record_date not in counted_days:
@@ -332,14 +331,10 @@ def get_daily_habit_data():
                                         'times_done':times_done})
                 # to avoid duplicate dates
                 counted_days.append(record.record_date)
-        print('*************')
-        print(daily_record_data)
+     
 
         daily_habit_dict[habit.habit_name] = daily_record_data
-        print('#############')
-        
-
-    print(daily_habit_dict)
+     
     return jsonify(daily_habit_dict)
 
 @app.route("/logout")
