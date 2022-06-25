@@ -94,8 +94,9 @@ fetch('/chart_data.json')
         }
         // create array of datasets 
         let dataSet=[]
-        let colors = ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
-        '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
+        let colors = habit_colors = ['#aed9e0','#d5ecd4','#ffa69e','#fed88d','#e49ab0']
+        // let colors = ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
+        // '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
 
         for(let i=0; i<dataArr.length; i++){
             let name = Object.keys(dataArr[i])[0]
@@ -110,7 +111,7 @@ fetch('/chart_data.json')
 
         // create and configure chart 
         new Chart(document.querySelector('#multi-line'), {
-        type: 'bar',
+        type: 'line',
         data: {
             datasets: dataSet,
         },
@@ -126,7 +127,7 @@ fetch('/chart_data.json')
                 time: {
                 
                 tooltipFormat: 'LLLL dd', // Luxon format string
-                unit: 'week',
+                unit: 'day',
                 },
             },
             y: {
@@ -148,21 +149,7 @@ fetch('/chart_data.json')
     );
 
 // show chart upon button click
-const chartBtn = document.querySelector('#show-chart')
-const chart = document.querySelector('#habit-chart')
-chartBtn.addEventListener('click', ()=>{
-    if (chartBtn.textContent ==="See Chart"){
-        chartBtn.textContent ="Hide Chart";
-    } else {
-        chartBtn.textContent ="See Chart";
-    }
 
-    if (chart.style.display === "none") {
-        chart.style.display = "block";
-      } else {
-        chart.style.display = "none";
-      }
-})
 
 window.onload = (event) => {
     let myAlert = document.querySelectorAll('.toast')[0];

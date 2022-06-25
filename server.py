@@ -18,8 +18,10 @@ app.jinja_env.undefined = StrictUndefined
 CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
 CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
 CLOUD_NAME = "habittracking"
-
-first_time=True
+ 
+# habit_colors= ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
+#         '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
+habit_colors = ['#aed9e0','#d5ecd4','#ffa69e','#fed88d','#e49ab0']
 
 @app.route("/")
 def index():
@@ -99,16 +101,30 @@ def view_progress():
         
         habits = Habit.get_by_user(user.user_id)
         # loop over habit list to generate record list
-        record_lst = []
-        for habit in habits:
+        # record_lst = []
+        events = []
+        for i, habit in enumerate(habits):
             records = Record.get_by_habit(habit.habit_id)
-            record_lst += records
+            # record_lst += records
+            for record in records:
+                events.append({
+                                'id': f"{record.habit.habit_id}",
+                                'title': f"{record.habit.habit_name}",
+                                'start': f"{record.record_date}",
+                                'color': habit_colors[i]})
+
             Habit.update_curr_streak(habit.habit_id)
             Habit.update_max_streak(habit.habit_id)
 
         # populate events list for calendar 
-        events = [{'title': f"{record.habit.habit_name.capitalize()}",
-                'start': f"{record.record_date}"} for record in record_lst]
+        # events = [{
+        #         'id': f"{record.habit.habit_id}",
+        #         'title': f"{record.habit.habit_name.capitalize()}",
+        #         'start': f"{record.record_date}",
+        #         'color': "#88d498"}
+        #         for record in record_lst]
+        print('**************')
+        print(events)
         daily_habits = Habit.query.filter(Habit.time_period=="daily", Habit.user_id==user.user_id).all()
         weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
         monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
@@ -129,9 +145,8 @@ def create_habit():
     habit_name = request.json.get("habit_name").capitalize()
     frequency = request.json.get("frequency")
     time_period = request.json.get("time_period")
-    start_date = datetime.strptime(
-        request.json.get("start_date"),
-        '%Y-%m-%d')
+    start_date = datetime.strptime(request.json.get("start_date"),
+                                   '%Y-%m-%d')
     reminder = request.json.get("reminder")
     current_streak = 0
     max_streak = 0
