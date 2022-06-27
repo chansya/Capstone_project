@@ -6,22 +6,19 @@ from flask import Flask, jsonify, render_template, render_template_string, reque
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, timedelta
 import os
+from passlib.hash import argon2
 import cloudinary.uploader
 from jinja2 import StrictUndefined
 
 app = Flask(__name__)
 app.secret_key= os.environ['secret_key']
-
 app.jinja_env.undefined = StrictUndefined
-
+  
 
 CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
 CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
 CLOUD_NAME = "habittracking"
  
-# habit_colors= ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
-#         '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
-habit_colors = ['#aed9e0','#d5ecd4','#ffa69e','#fed88d','#e49ab0']
 
 @app.route("/")
 def index():
@@ -38,12 +35,20 @@ def login():
     error = None
     if request.method == 'POST':
         email = request.form.get("email")
-        password = request.form.get("password")
-
+        attempt_pw = request.form.get("password")
+        
+        
         user = User.get_by_email(email)
-        # if login fail, redirect back to login with error message
-        if not user or user.password != password:
-            error = "Invalid credentials. Please try again."
+        if not user:
+            error = "Email does not exist. Please try again."
+            return render_template('login.html', error=error)
+        else:
+            hashed_pw = user.password 
+            pw_matched = argon2.verify(attempt_pw, hashed_pw)
+            # if login fail, redirect back to login with error message
+            if not pw_matched:
+                error = "Invalid password. Please try again."
+                return render_template('login.html', error=error)
         
         session["user_email"] = user.email
         session.modified = True
@@ -59,6 +64,8 @@ def login():
         # Create flash message reminder
         if missed_entries != "":
             flash(f"There seems to be missed entries for {missed_entries} did you forget to log it?")
+        else:
+            flash(f"Welcome back {user.name}! How is it going?")
         return redirect("/progress")
 
     return render_template('login.html', error=error)
@@ -72,12 +79,15 @@ def signup():
         email = request.form.get("email")
         password = request.form.get("password")
 
+        hashed_pw = argon2.hash(password)
+        print(hashed_pw)
+
         user = User.get_by_email(email)
         if user:
             flash("Email already exists. Please log in.")
             return redirect("/login")
         else:
-            user = User.create(name, email, password)
+            user = User.create(name, email, hashed_pw)
             db.session.add(user)
             db.session.commit()
             session["user_email"] = user.email
@@ -87,7 +97,7 @@ def signup():
             badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome", "Register an account")
             db.session.add(badge1)
             db.session.commit()
-            flash("You've earned a badge! You can see it under your profile.")
+            flash("You've earned a badge for creating an account! You can see it under your profile.")
             return redirect("/progress")
 
     return render_template('signup.html')
@@ -100,12 +110,13 @@ def view_progress():
     if user:
         
         habits = Habit.get_by_user(user.user_id)
-        # loop over habit list to generate record list
-        # record_lst = []
+
+        # loop over habit list to populate event list for calendar
         events = []
+        habit_colors = ['#c5dedd','#bcd4e6','#fad2e1','#eddcd2','#cddafd',
+                '#f0efeb','#dbe7e4','#d6e2e9','#fde2e4','#dfe7fd']
         for i, habit in enumerate(habits):
             records = Record.get_by_habit(habit.habit_id)
-            # record_lst += records
             for record in records:
                 events.append({
                                 'id': f"{record.habit.habit_id}",
@@ -116,25 +127,14 @@ def view_progress():
             Habit.update_curr_streak(habit.habit_id)
             Habit.update_max_streak(habit.habit_id)
 
-        # populate events list for calendar 
-        # events = [{
-        #         'id': f"{record.habit.habit_id}",
-        #         'title': f"{record.habit.habit_name.capitalize()}",
-        #         'start': f"{record.record_date}",
-        #         'color': "#88d498"}
-        #         for record in record_lst]
-        print('**************')
-        print(events)
         daily_habits = Habit.query.filter(Habit.time_period=="daily", Habit.user_id==user.user_id).all()
         weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
         monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
-
 
         return render_template("progress.html", user=user, habits=habits, events=events,
                                 daily_habits=daily_habits,weekly_habits=weekly_habits, monthly_habits=monthly_habits)
     else:
         return redirect('/')
-
 
 
 @app.route("/create_habit", methods=["POST"])

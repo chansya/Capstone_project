@@ -80,7 +80,7 @@ fetch('/chart_data.json')
     .then((response) => response.json())
     .then((responseJson) => {
         // create an array of objects with habit name as key and list of records as value
-        let dataArr = []
+        let dataArr = [];
         for(const [habit_name, daily_records] of Object.entries(responseJson)){
 
             const data = daily_records.map((dailyTotal) => ({
@@ -93,10 +93,9 @@ fetch('/chart_data.json')
             dataArr.push(data_dict);
         }
         // create array of datasets 
-        let dataSet=[]
-        let colors = habit_colors = ['#aed9e0','#d5ecd4','#ffa69e','#fed88d','#e49ab0']
-        // let colors = ['#FFCFD2','#98F5E1','#B9FBC0','#FDE4CF',
-        // '#CFBAF0','#F1C0E8','#90DBF4','#FBF8CC','#A3C4F3','#8EECF5']
+        let dataSet=[];
+        let colors = ['#c5dedd','#bcd4e6','#fad2e1','#eddcd2','#cddafd',
+        '#f0efeb','#dbe7e4','#d6e2e9','#fde2e4','#dfe7fd'];
 
         for(let i=0; i<dataArr.length; i++){
             let name = Object.keys(dataArr[i])[0]
