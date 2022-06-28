@@ -269,8 +269,66 @@ def view_habits():
     """View a list of habits for a user."""
     user = User.get_by_email(session.get("user_email"))
     habits = Habit.get_by_user(user.user_id)
+    user_habits = user.habits
+    print("^^^^^^^^")
+    print(habits)
+    print(user_habits)
     return render_template("all_habits.html", user=user, habits=habits)
 
+@app.route("/habits")
+def react_habits():
+    """View all habits."""
+    return render_template("habits.html")
+
+
+@app.route("/habits.json")
+def get_habits_json():
+    """Return a list of habits for a user as json."""
+    user = User.get_by_email(session.get("user_email"))
+    habits = Habit.get_by_user(user.user_id)
+    user_habits = user.habits
+    habits_to_send =[]
+    for habit in habits:
+        habits_to_send.append(
+                    {"habit_id": habit.habit_id,
+                     "habit_name": habit.habit_name,
+                     "frequency": habit.frequency,
+                     "time_period": habit.time_period,
+                     "current_streak": habit.current_streak,
+                     "max_streak": habit.max_streak,
+                     "start_date": habit.start_date,
+                     "reminder": habit.reminder
+                     })
+    print("&&&&&&&")
+    print(habits_to_send)
+    return jsonify({"habits": habits_to_send})
+    
+@app.route("/api/remove/<habit_id>")
+def react_remove_habit(habit_id):
+    """Remove a habit and all its related records."""
+    Record.query.filter_by(habit_id=habit_id).delete()
+    habit = Habit.get_by_id(habit_id)
+    db.session.delete(habit)
+    db.session.commit()
+    user = User.get_by_email(session.get("user_email"))
+    
+    habits = user.habits
+    habits_to_send = []
+    for habit in habits:
+        habits_to_send.append(
+                    {"habit_id": habit.habit_id,
+                     "habit_name": habit.habit_name,
+                     "frequency": habit.frequency,
+                     "time_period": habit.time_period,
+                     "current_streak": habit.current_streak,
+                     "max_streak": habit.max_streak,
+                     "start_date": habit.start_date,
+                     "reminder": habit.reminder
+                     })
+    print("&&&&&&&")
+    print(habits_to_send)
+    return jsonify({"habits": habits_to_send})
+    
 
 @app.route("/<habit_id>/remove_habit")
 def remove_habit(habit_id):
