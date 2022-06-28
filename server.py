@@ -276,13 +276,15 @@ def view_habits():
     return render_template("all_habits.html", user=user, habits=habits)
 
 @app.route("/habits")
-def react_habits():
+def react_all_habits():
     """View all habits."""
-    return render_template("habits.html")
+    user = User.get_by_email(session["user_email"])
+    habits = Habit.get_by_user(user.user_id)
+    return render_template("habits.html", user=user, habits=habits)
 
 
 @app.route("/habits.json")
-def get_habits_json():
+def react_habits_json():
     """Return a list of habits for a user as json."""
     user = User.get_by_email(session.get("user_email"))
     habits = Habit.get_by_user(user.user_id)
@@ -303,32 +305,30 @@ def get_habits_json():
     print(habits_to_send)
     return jsonify({"habits": habits_to_send})
     
-@app.route("/api/remove/<habit_id>")
+# @app.route("/<habit_id>/records.json")
+# def get_records_json(habit_id):
+#     user = User.get_by_email(session["user_email"])
+#     habit = Habit.get_by_id(habit_id)
+#     records = Record.get_by_habit(habit_id)
+
+@app.route("/react/remove_habit/<habit_id>")
 def react_remove_habit(habit_id):
     """Remove a habit and all its related records."""
     Record.query.filter_by(habit_id=habit_id).delete()
     habit = Habit.get_by_id(habit_id)
     db.session.delete(habit)
     db.session.commit()
-    user = User.get_by_email(session.get("user_email"))
-    
-    habits = user.habits
-    habits_to_send = []
-    for habit in habits:
-        habits_to_send.append(
-                    {"habit_id": habit.habit_id,
-                     "habit_name": habit.habit_name,
-                     "frequency": habit.frequency,
-                     "time_period": habit.time_period,
-                     "current_streak": habit.current_streak,
-                     "max_streak": habit.max_streak,
-                     "start_date": habit.start_date,
-                     "reminder": habit.reminder
-                     })
-    print("&&&&&&&")
-    print(habits_to_send)
-    return jsonify({"habits": habits_to_send})
-    
+    return jsonify({'status':'success'})
+  
+
+@app.route("/react/remove_record/<record_id>")
+def react_remove_record(record_id):
+    """Remove a records."""
+    record = Record.get_by_id(record_id)
+    db.session.delete(record)
+    db.session.commit()
+    return jsonify({'status':'success'})
+  
 
 @app.route("/<habit_id>/remove_habit")
 def remove_habit(habit_id):
@@ -341,13 +341,34 @@ def remove_habit(habit_id):
     return redirect('/all_habits')
 
 
+@app.route("/react/<habit_id>/records")
+def react_get_records(habit_id):
+    user = User.get_by_email(session["user_email"])
+    habit = Habit.get_by_id(habit_id)
+    records = Record.query.filter(Record.habit_id==habit_id).order_by(Record.record_date.desc()).all()
+
+    records_to_send = []
+    for record in records: 
+        records_to_send.append( 
+            {'habit_name': habit.habit_name,
+            'record_id':record.record_id,
+            'notes':record.notes,
+            'img_url':record.img_url,
+            'record_date': record.record_date})
+
+    return jsonify({'records': records_to_send})
+
+
 @app.route("/<habit_id>/records")
 def view_records(habit_id):
     """View all records for a habit."""
     user = User.get_by_email(session["user_email"])
+    habits=user.habits
     habit = Habit.get_by_id(habit_id)
     records = Record.get_by_habit(habit_id)
-    return render_template("all_records.html", user=user, habit=habit, records=records)
+    recordsss = habit.records
+    
+    return render_template("all_records.html", user=user, habit=habit, habits=habits, records=records)
 
 
 @app.route("/<record_id>/remove_record")
@@ -365,8 +386,9 @@ def remove_record(record_id):
 def view_badges():
     """View all the badges for a user."""
     user = User.get_by_email(session["user_email"])
+    habits = user.habits
     badges = Badge.get_by_user(user.user_id)
-    return render_template("all_badges.html", user=user, badges=badges)
+    return render_template("all_badges.html", user=user, badges=badges, habits=habits)
 
 
 @app.route("/chart_data.json")

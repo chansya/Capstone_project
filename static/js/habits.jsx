@@ -1,16 +1,13 @@
 'use strict';
 
-// function Habit(props){
-//     return (
-//         <p>{props.name}</p>
-//     );
-// }
+
 function Habits(){
 
-    // use the useState hook to set cards to empty array as initial value, 
-    // then when data is fetched, update habits using setHabits
+    // useState hook to set habits to empty array as initial value
     const [habits, setHabits] = React.useState([])
-    
+    const [records, setRecords] = React.useState([])
+
+    // fetch data from backend then update habits using setHabits
     React.useEffect(()=>{
         fetch('/habits.json')
             .then((response)=>response.json())
@@ -19,53 +16,101 @@ function Habits(){
                 setHabits(result.habits)}
                 );
     },[]);
+
+    // populate habit elements from habit list fetched
+    const habitEls = habits.map((habit)=>(
+        <li key={habit.habit_id}>{habit.habit_name}
+        <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>Check records</button>
+        <button className="btn btn-light" onClick={()=>removeHabit(habit.habit_id)}> 
+        <img src="static/img/trash.svg" alt="trash">
+        </img></button>
+        </li>))
     
-    // remove habit when button is clicked by setting habit list to filtered list
-    function handleRemove(id){
+    // remove habit when trash button is clicked
+    function removeHabit(id){
         let confirmRemove = confirm("Are you sure about removing this habit? All records will be removed too.")
-        console.log(confirmRemove)
         if (confirmRemove) {
-            fetch(`/api/remove/${id}`)
+            fetch(`/react/remove_habit/${id}`)
             .then((response)=>response.json())
             .then((result) => {
-                setHabits(result.habits)
+                if(result.status === 'success'){
+                    // setting habit list to filtered list
+                    const newList = habits.filter((habit)=>habit.habit_id!==id);
+                    setHabits(newList)
+                }
             });
         };
     }
+    
 
-    const habitList = [];
-    for (const habit of habits){
-        habitList.push(
-        <li key={habit.habit_id}>{habit.habit_name}
-        <button type="button" onClick={()=>handleRemove(habit.habit_id)}>
-            Remove
-        </button>
-        </li>);
-    }
-    return (
-        <React.Fragment>
-            <h2>Habit List: </h2>
-            
-            <ul>{habitList}</ul>
-
-            
-        </React.Fragment>
-        
-        );
-}
-
-function RecordList(){
-    const [records, setRecords] = React.useState([])
-    React.useEffect(()=>{
-        // how to get records of specific habit??
-        fetch('/records.json')
+    // fetch record data when habit is selected
+    function updateRecords(id){
+        console.log(`/react/${id}/records`)
+        fetch(`/react/${id}/records`)
             .then((response)=>response.json())
             .then((result)=>{
                 console.log(result);
-                setRecords(result.records)}
+                setRecords(result.records);}
                 );
-    },[]);
+    }
+    console.log("HABIT Records!")
+    console.log(records)
+
+    function removeRecord(id){
+        let confirmRemove = confirm("Are you sure about removing this record?")
+        if (confirmRemove) {
+            fetch(`/react/remove_record/${id}`)
+            .then((response)=>response.json())
+            .then((result) => {
+                if(result.status === 'success'){
+                    // setting habit list to filtered list
+                    const newList = records.filter((record)=>record.record_id!==id);
+                    setRecords(newList);
+                }
+            });
+        };
+    }
+   
+    // loop thru the records state and create record component
+    const recordList = []
+
+    for (const record of records){
+        recordList.push(
+            <Record
+            key = {record.record_id}
+            record_date = {record.record_date}
+            notes = {record.notes}
+            img_url = {record.img_url}
+            />,
+            <button className="btn btn-light" onClick={()=>removeRecord(record.record_id)}> 
+            <img src="static/img/trash.svg" alt="trash">
+            </img></button>
+        )
+    }
+
+    return (
+        <React.Fragment>
+            <h2>Habit List: </h2>           
+            <ul>{habitEls}</ul>
+            <hr />
+            <h2>Record List:</h2>
+            <ul>{recordList}</ul>
+        </React.Fragment>
+        );
 }
+
+// Single record component
+function Record(props){
+    return (
+        <li>
+            <p>Recorded on {props.record_date}</p>
+            <p>Notes: {props.notes}</p>
+            <img src="props.img_url" alt="record_image" />
+            
+        </li>
+    );
+}
+   
 
 
 ReactDOM.render(
