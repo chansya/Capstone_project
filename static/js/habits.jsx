@@ -90,11 +90,17 @@ function Habits(){
 
     return (
         <React.Fragment>
-            <h2>Habit List: </h2>           
-            <ul>{habitEls}</ul>
-            <hr />
-            <h2>Record List:</h2>
-            <ul>{recordList}</ul>
+            
+            <div className="sidenav">
+                <h2>Habit List: </h2>  
+                <ul>{habitEls}</ul>
+            </div>
+
+            <div className="main">
+                <h2>Record List:</h2>
+                <ul>{recordList}</ul>
+            </div>
+            
         </React.Fragment>
         );
 }

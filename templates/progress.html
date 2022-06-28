@@ -123,7 +123,27 @@
         </h2>
         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
           <div class="accordion-body">
-            TBD
+            {% for record in recent_recs %}
+            <div class="card mb-3" style="max-width: 540px;">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  {% if record.img_url == "" %}
+                  <img src="static/img/thumbsUp.jpg" class="img-fluid rounded-start" alt="placeholderImg">
+                  {% else %}
+                  <img src="{{ record.img_url }}" class="img-fluid rounded-start" alt="record_image">
+                  {% endif %}
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ record.habit.habit_name }}</h5>
+                    <p class="card-text">{{ record.notes }}</p>
+                    <p class="card-text"><small class="text-muted">{{ record.record_date }}</small></p>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>

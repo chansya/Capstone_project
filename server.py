@@ -110,7 +110,7 @@ def view_progress():
     if user:
         
         habits = Habit.get_by_user(user.user_id)
-
+        
         # loop over habit list to populate event list for calendar
         events = []
         habit_colors = ['#c5dedd','#bcd4e6','#fad2e1','#eddcd2','#cddafd',
@@ -130,9 +130,12 @@ def view_progress():
         daily_habits = Habit.query.filter(Habit.time_period=="daily", Habit.user_id==user.user_id).all()
         weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
         monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
-
+        # 3 most recent records for the user
+        recent_recs = Record.query.join(Habit).filter(Habit.user_id ==user.user_id).order_by(Record.record_date.desc()).limit(3)
+        
         return render_template("progress.html", user=user, habits=habits, events=events,
-                                daily_habits=daily_habits,weekly_habits=weekly_habits, monthly_habits=monthly_habits)
+                                daily_habits=daily_habits,weekly_habits=weekly_habits, 
+                                monthly_habits=monthly_habits, recent_recs=recent_recs)
     else:
         return redirect('/')
 
