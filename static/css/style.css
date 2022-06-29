@@ -9,5 +9,8 @@ body{
 #slogan{
     display: flex;
     justify-content: center;
-    align-items: center;
+}
+
+.badges{
+    width: 6rem;
 }

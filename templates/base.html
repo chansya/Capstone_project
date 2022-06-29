@@ -185,8 +185,8 @@
                         <div class="row">
                           {% for badge in badges %}
                           <div class="col ms-auto">
-                                  <img src="{{badge.img_url}}" alt="badge" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ badge.message }}">
-                                  <p>{{ badge.name }}</p>
+                                  <img class="badges" src="{{badge.img_url}}" alt="badge" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ badge.message }}">
+                                  <p class="badge-name">{{ badge.name }}</p>
                               
                           </div>
                           {% endfor %}

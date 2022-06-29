@@ -35,69 +35,74 @@
         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
           <div class="accordion-body">
              <div id="habit_list">
-      
- 
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col" class="table-dark"></th>
-            <th scope="col" class="table-dark">Current Streak</th>
-            <th scope="col" class="table-dark">Longest Streak</th>
-            <th scope="col" class="table-dark">Total Record</th>
-          </tr>
-        </thead>
-        <tbody id="habit-table">
-          
-          <tr class="table-secondary" id="daily-row">
-            <th scope="row">Daily</th>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          {% for habit in daily_habits %}
-            <tr>
-              <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
-              <td>{{ habit.current_streak }}</td>
-              <td>{{ habit.max_streak }}</td>
-              <td>{{ habit.records|length }}</td>
-            </tr>
-          {% endfor %}
-          
+              {% if habits %}
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" class="table-dark"></th>
+                    <th scope="col" class="table-dark">Current Streak</th>
+                    <th scope="col" class="table-dark">Longest Streak</th>
+                    <th scope="col" class="table-dark">Total Record</th>
+                  </tr>
+                </thead>
+                <tbody id="habit-table">
+                  {% if daily_habits %}
+                  <tr class="table-secondary" id="daily-row">
+                    <th scope="row">Daily</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  {% for habit in daily_habits %}
+                    <tr>
+                      <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
+                      <td>{{ habit.current_streak }}</td>
+                      <td>{{ habit.max_streak }}</td>
+                      <td>{{ habit.records|length }}</td>
+                    </tr>
+                  {% endfor %}
+                  {% endif %}
 
-            <tr class="table-secondary" id="weekly-row">
-              <th scope="row">Weekly</th>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            {% for habit in weekly_habits %}
-              <tr>
-                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per week">{{habit.habit_name}}</th>
-                <td>{{ habit.current_streak }}</td>
-                <td>{{ habit.max_streak }}</td>
-                <td>{{ habit.records|length }}</td>
-              </tr>
-            {% endfor %}
+                  {% if weekly_habits %}
+                    <tr class="table-secondary" id="weekly-row">
+                      <th scope="row">Weekly</th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    {% for habit in weekly_habits %}
+                      <tr>
+                        <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per week">{{habit.habit_name}}</th>
+                        <td>{{ habit.current_streak }}</td>
+                        <td>{{ habit.max_streak }}</td>
+                        <td>{{ habit.records|length }}</td>
+                      </tr>
+                    {% endfor %}
+                    {% endif %}
 
+                    {% if monthly_habits %}
+                    <tr class="table-secondary" id="monthly-row">
+                      <th scope="row">Monthly</th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    {% for habit in monthly_habits %}
+                      <tr>
+                        <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
+                        <td>{{ habit.current_streak }}</td>
+                        <td>{{ habit.max_streak }}</td>
+                        <td>{{ habit.records|length }}</td>
+                      </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+              </table>
+              {% else %}
+              <p>So empty... Let's create a habit!</p>
+              {% endif %}
 
-            <tr class="table-secondary" id="monthly-row">
-              <th scope="row">Monthly</th>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            {% for habit in monthly_habits %}
-              <tr>
-                <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
-                <td>{{ habit.current_streak }}</td>
-                <td>{{ habit.max_streak }}</td>
-                <td>{{ habit.records|length }}</td>
-              </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-    </div> 
-   
+             </div> 
           </div>
         </div>
       </div>
@@ -123,6 +128,7 @@
         </h2>
         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
           <div class="accordion-body">
+            {% if habits %}
             {% for record in recent_recs %}
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row g-0">
@@ -144,6 +150,9 @@
               
             </div>
             {% endfor %}
+            {% else %}
+            <p>Hmm..there is no record yet. Did you log your habit yet?</p>
+            {% endif %}
           </div>
         </div>
       </div>
