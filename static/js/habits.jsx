@@ -19,12 +19,13 @@ function Habits(){
 
     // populate habit elements from habit list fetched
     const habitEls = habits.map((habit)=>(
-        <li key={habit.habit_id}>{habit.habit_name}
-        <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>Check records</button>
+        <div key={habit.habit_id}>
+        
+        <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
         <button className="btn btn-light" onClick={()=>removeHabit(habit.habit_id)}> 
         <img src="static/img/trash.svg" alt="trash">
         </img></button>
-        </li>))
+        </div>))
     
     // remove habit when trash button is clicked
     function removeHabit(id){
@@ -86,20 +87,25 @@ function Habits(){
             <img src="static/img/trash.svg" alt="trash">
             </img></button>
         )
+        console.log(record.img_url)
     }
 
     return (
         <React.Fragment>
-            
-            <div className="sidenav">
-                <h2>Habit List: </h2>  
-                <ul>{habitEls}</ul>
+            <div className="row">
+            <div className="col-4">
+                <h4>Habits</h4>
+                
+                
+                <div>{habitEls}</div>
             </div>
 
-            <div className="main">
-                <h2>Record List:</h2>
-                <ul>{recordList}</ul>
+            <div className="col-8">
+                <h4>Records</h4>
+                <div>{recordList}</div>
             </div>
+            </div>
+            
             
         </React.Fragment>
         );
@@ -108,12 +114,11 @@ function Habits(){
 // Single record component
 function Record(props){
     return (
-        <li>
-            <p>Recorded on {props.record_date}</p>
+        <div>
+            <p>{props.record_date}</p>
             <p>Notes: {props.notes}</p>
-            <img src="props.img_url" alt="record_image" />
-            
-        </li>
+            <img src={props.img_url} alt="record_image" width="200px"/>
+        </div>
     );
 }
    

@@ -33,28 +33,28 @@ def index():
 def login():
     """View login page and process login."""
     error = None
+
     if request.method == 'POST':
         email = request.form.get("email")
         attempt_pw = request.form.get("password")
         
-        
         user = User.get_by_email(email)
+        # if login fail, redirect back to login with error message
         if not user:
-            error = "Email does not exist. Please try again."
+            error = "Invalid email. Please try again."
             return render_template('login.html', error=error)
         else:
             hashed_pw = user.password 
             pw_matched = argon2.verify(attempt_pw, hashed_pw)
-            # if login fail, redirect back to login with error message
             if not pw_matched:
                 error = "Invalid password. Please try again."
                 return render_template('login.html', error=error)
         
         session["user_email"] = user.email
-        session.modified = True
+      
         # Check for missed entries 
         user = User.get_by_email(session["user_email"])
-        habits = Habit.get_by_user(user.user_id)
+        habits = user.habits
         
         missed_entries = ""
         for habit in habits:
@@ -75,7 +75,8 @@ def login():
 def signup():
     """Create a new user."""
     if request.method == 'POST':
-        name = request.form.get("name")
+        error = None
+        name = request.form.get("name").capitalize()
         email = request.form.get("email")
         password = request.form.get("password")
 
@@ -84,20 +85,19 @@ def signup():
 
         user = User.get_by_email(email)
         if user:
-            flash("Email already exists. Please log in.")
-            return redirect("/login")
+            error = "Email already exists. Please log in."
+            return render_template('login.html', error=error)
         else:
             user = User.create(name, email, hashed_pw)
             db.session.add(user)
             db.session.commit()
             session["user_email"] = user.email
-            session.modified = True
             
             # Create badge 1 for sign up
-            badge1 = Badge.create(user.user_id, "static/img/1.png", "Welcome", "Register an account")
+            badge1 = Badge.create(user.user_id, "static/img/1.png", "Our New Star", "Register an account")
             db.session.add(badge1)
             db.session.commit()
-            flash("You've earned a badge for creating an account! You can see it under your profile.")
+            flash("Yay! You've earned a badge for creating an account! Check it under your profile.")
             return redirect("/progress")
 
     return render_template('signup.html')
@@ -109,7 +109,9 @@ def view_progress():
     user = User.get_by_email(session["user_email"])
     if user:
         
-        habits = Habit.get_by_user(user.user_id)
+        habits = user.habits
+        # habits = Habit.query.filter(Habit.user_id==user.user_id).order_by(Habit.habit_id.asc()).all()
+        badges = user.badges
         
         # loop over habit list to populate event list for calendar
         events = []
@@ -127,29 +129,34 @@ def view_progress():
             Habit.update_curr_streak(habit.habit_id)
             Habit.update_max_streak(habit.habit_id)
 
-        daily_habits = Habit.query.filter(Habit.time_period=="daily", Habit.user_id==user.user_id).all()
-        weekly_habits = Habit.query.filter(Habit.time_period=="weekly", Habit.user_id==user.user_id).all()
-        monthly_habits = Habit.query.filter(Habit.time_period=="monthly", Habit.user_id==user.user_id).all()
-        # 3 most recent records for the user
-        recent_recs = Record.query.join(Habit).filter(Habit.user_id ==user.user_id).order_by(Record.record_date.desc()).limit(3)
+        # Get list of daily/weekly/monthly habits to update Overview
+        daily_habits = Habit.query.filter(Habit.time_period=="daily", 
+                                          Habit.user_id==user.user_id).all()
+        weekly_habits = Habit.query.filter(Habit.time_period=="weekly", 
+                                           Habit.user_id==user.user_id).all()
+        monthly_habits = Habit.query.filter(Habit.time_period=="monthly", 
+                                            Habit.user_id==user.user_id).all()
+        
+        # Get 3 most recent records to update Recent Log
+        recent_recs = Record.query.join(Habit).filter(Habit.user_id == user.user_id).order_by(Record.record_date.desc()).limit(3)
         
         return render_template("progress.html", user=user, habits=habits, events=events,
                                 daily_habits=daily_habits,weekly_habits=weekly_habits, 
-                                monthly_habits=monthly_habits, recent_recs=recent_recs)
+                                monthly_habits=monthly_habits, recent_recs=recent_recs, badges=badges)
     else:
         return redirect('/')
 
 
 @app.route("/create_habit", methods=["POST"])
 def create_habit():
-    """Create new habit object and add into database."""
+    """Create new habit object and update database."""
 
-    # extract the user input from the request
+    # Extract the user inputs from the post request
     habit_name = request.json.get("habit_name").capitalize()
     frequency = request.json.get("frequency")
     time_period = request.json.get("time_period")
-    start_date = datetime.strptime(request.json.get("start_date"),
-                                   '%Y-%m-%d')
+    # start_date = datetime.strptime(request.json.get("start_date"),
+    #                                '%Y-%m-%d')
     reminder = request.json.get("reminder")
     current_streak = 0
     max_streak = 0
@@ -157,8 +164,7 @@ def create_habit():
 
     # create new habit object in database
     habit = Habit.create(user.user_id, habit_name, frequency,
-                         time_period, current_streak, max_streak,
-                         start_date, reminder)
+                         time_period, current_streak, max_streak, reminder)
     db.session.add(habit)
     db.session.commit()
 
@@ -169,7 +175,7 @@ def create_habit():
                                  Badge.img_url=="static/img/2.png").first()
     if Habit.count_habit_by_user(user.user_id) == 1 and badge2 == None:
         # Create badge 2 for first habit
-        badge2 = Badge.create(user.user_id, "static/img/2.png", "First Goal", "Create first habit")
+        badge2 = Badge.create(user.user_id, "static/img/2.png", "First Step", "Create first habit")
         db.session.add(badge2)
         db.session.commit()
         flash("You've created your first habit and earned a badge!")
@@ -191,8 +197,7 @@ def create_habit():
                      "current_streak": habit.current_streak,
                      "max_streak": habit.max_streak,
                      "frequency": habit.frequency,
-                     "time_period": habit.time_period,
-                     "start_date": habit.start_date,
+                     "time_period": habit.time_period
                      }
     
     return jsonify(habit_to_send)
@@ -218,17 +223,13 @@ def create_record():
         # url for the uploaded image
         img_url = result['secure_url']
     else:
-        img_url=""
+        img_url="static/img/thumbsUp.jpg"
 
     # Create new record object
     record = Record.create(habit_id, finished, notes, img_url, record_date)
     db.session.add(record)
     db.session.commit()
     
-    # update streak based on record
-    # Habit.update_curr_streak(habit_id)
-    # Habit.update_max_streak(habit_id)
-
     # Create badges according to number of records
     user = User.get_by_email(session["user_email"])
     habits = Habit.get_by_user(user.user_id)
@@ -271,19 +272,20 @@ def create_record():
 def view_habits():
     """View a list of habits for a user."""
     user = User.get_by_email(session.get("user_email"))
-    habits = Habit.get_by_user(user.user_id)
-    user_habits = user.habits
-    print("^^^^^^^^")
-    print(habits)
-    print(user_habits)
-    return render_template("all_habits.html", user=user, habits=habits)
+    
+    habits = user.habits
+    badges = user.badges
+   
+    return render_template("all_habits.html", user=user, habits=habits,badges=badges)
 
 @app.route("/habits")
-def react_all_habits():
+def react_view_habits():
     """View all habits."""
     user = User.get_by_email(session["user_email"])
     habits = Habit.get_by_user(user.user_id)
-    return render_template("habits.html", user=user, habits=habits)
+    badges = Badge.get_by_user(user.user_id)
+    print(badges)
+    return render_template("habits.html", user=user, habits=habits, badges=badges)
 
 
 @app.route("/habits.json")
@@ -301,18 +303,12 @@ def react_habits_json():
                      "time_period": habit.time_period,
                      "current_streak": habit.current_streak,
                      "max_streak": habit.max_streak,
-                     "start_date": habit.start_date,
                      "reminder": habit.reminder
                      })
     print("&&&&&&&")
     print(habits_to_send)
     return jsonify({"habits": habits_to_send})
     
-# @app.route("/<habit_id>/records.json")
-# def get_records_json(habit_id):
-#     user = User.get_by_email(session["user_email"])
-#     habit = Habit.get_by_id(habit_id)
-#     records = Record.get_by_habit(habit_id)
 
 @app.route("/react/remove_habit/<habit_id>")
 def react_remove_habit(habit_id):
@@ -400,7 +396,7 @@ def get_chart_data():
 
     # get user
     user = User.get_by_email(session.get("user_email"))
-    habits = Habit.get_by_user(user.user_id)
+    habits = user.habits
     # get habit id list
     
     daily_habit_dict = {}

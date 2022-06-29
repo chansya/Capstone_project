@@ -59,9 +59,9 @@ class Habit(db.Model):
     time_period = db.Column(db.String, nullable=False)
     current_streak = db.Column(db.Integer, nullable=False, default=0)
     max_streak = db.Column(db.Integer, nullable=False, default=0)
-    start_date = db.Column(db.Date, nullable=False)
+    # start_date = db.Column(db.Date, nullable=False)
     reminder = db.Column(db.String, nullable=True)
-    # end_date = db.Column(db.Date, nullable=True)
+
 
     # The user to which a habit belongs
     user = db.relationship("User", back_populates="habits")
@@ -73,7 +73,7 @@ class Habit(db.Model):
 
     @classmethod
     def create(cls, user_id, habit_name, frequency, time_period,
-                 current_streak, max_streak, start_date, reminder):
+                 current_streak, max_streak, reminder):
         """Create and return a new habit."""
 
         return cls(user_id=user_id,
@@ -82,8 +82,8 @@ class Habit(db.Model):
                    time_period=time_period,
                    current_streak=current_streak,
                    max_streak=max_streak,
-                   start_date=start_date,
                    reminder=reminder)
+        #   start_date=start_date,
         #   end_date=end_date)
 
     @classmethod

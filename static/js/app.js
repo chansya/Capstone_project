@@ -9,7 +9,7 @@ habitForm.addEventListener('submit',(evt)=>{
         habit_name : document.querySelector('#habit_name').value,
         frequency : document.querySelector('#frequency').value,
         time_period : document.querySelector('#time_period').value,
-        start_date : document.querySelector('#start_date').value,
+        // start_date : document.querySelector('#start_date').value,
         reminder : document.querySelector('#reminder').value
     }
     console.log(formInput)
@@ -110,7 +110,7 @@ fetch('/chart_data.json')
 
         // create and configure chart 
         new Chart(document.querySelector('#multi-line'), {
-        type: 'line',
+        type: 'bar',
         data: {
             datasets: dataSet,
         },

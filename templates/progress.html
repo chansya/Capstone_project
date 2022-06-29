@@ -20,12 +20,12 @@
   
   <div class="row">
     <!-- Calendar -->
-    <div class="col-md-7">
+    <div class="col-md-6">
       <a href="/habits">React habits</a>
       <div id="calendar"></div>
     </div>
     
-    <div class="accordion col-md-5" id="accordionExample">
+    <div class="accordion col-md-6" id="accordionExample">
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -127,10 +127,10 @@
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row g-0">
                 <div class="col-md-4">
-                  {% if record.img_url == "" %}
-                  <img src="static/img/thumbsUp.jpg" class="img-fluid rounded-start" alt="placeholderImg">
-                  {% else %}
+                  {% if record.img_url %}
                   <img src="{{ record.img_url }}" class="img-fluid rounded-start" alt="record_image">
+                  {% else %}
+                  <img src="static/img/thumbsUp.jpg" class="img-fluid rounded-start" alt="placeholderImg">
                   {% endif %}
                 </div>
                 <div class="col-md-8">

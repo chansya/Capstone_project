@@ -46,7 +46,7 @@
     </nav>
     
     {% else %}
-    
+    <!-- nav after log in -->
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="/progress">STICK</a>
@@ -88,11 +88,7 @@
                               <option value="monthly">Per Month</option>
                             </select>
                           </div>
-    
-                          <div class="mb-2">
-                            <label for="start_date" class="form-label">Start Date<span style="color: red">*</span></label>
-                            <input type="date" name="start_date" class="form-control" id="start_date" required>
-                          </div>
+
     
                           <div class="mb-2">
                             <label for="reminder" class="form-label">Message To Future Self</label>
@@ -169,12 +165,42 @@
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li><a class="dropdown-item" href="/all_habits">My Habits</a></li>
                   <li><a class="dropdown-item" href="/all_badges">My Badges</a></li>
-                  <li><a class="dropdown-item" href="/modal_badges">Modal Badges</a></li>
+                  <li><a class="dropdown-item" href="#exampleModal" data-bs-toggle="modal" data-bs-target="#exampleModal">View Achievements</a></li>
+
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="/logout">Log Out</a></li>
                 </ul>
               </li>
             </ul>
+            <!-- Modal for badges -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">My achievements</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="container-fluid">
+                        <div class="row">
+                          {% for badge in badges %}
+                          <div class="col ms-auto">
+                                  <img src="{{badge.img_url}}" alt="badge" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ badge.message }}">
+                                  <p>{{ badge.name }}</p>
+                              
+                          </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+
+                  
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
     </nav>
