@@ -152,12 +152,12 @@ def create_habit():
     """Create new habit object and update database."""
 
     # Extract the user inputs from the post request
-    habit_name = request.json.get("habit_name").capitalize()
-    frequency = request.json.get("frequency")
-    time_period = request.json.get("time_period")
+    habit_name = request.form.get("habit_name").capitalize()
+    frequency = request.form.get("frequency")
+    time_period = request.form.get("time_period")
     # start_date = datetime.strptime(request.json.get("start_date"),
     #                                '%Y-%m-%d')
-    reminder = request.json.get("reminder")
+    reminder = request.form.get("reminder")
     current_streak = 0
     max_streak = 0
     user = User.get_by_email(session.get("user_email"))
@@ -178,7 +178,7 @@ def create_habit():
         badge2 = Badge.create(user.user_id, "static/img/2.png", "First Step", "Create first habit")
         db.session.add(badge2)
         db.session.commit()
-        flash("You've created your first habit and earned a badge!")
+        flash("Awesome! You've created your first habit and earned a badge!")
 
     # Check for any existing badge 4 to avoid duplicate
     badge4 = Badge.query.filter(Badge.user_id==user.user_id,
@@ -189,18 +189,19 @@ def create_habit():
         badge4 = Badge.create(user.user_id, "static/img/4.png", "Multi-tasker", "Create 3 habits")
         db.session.add(badge4)
         db.session.commit()
-        flash("You've created your three habits and earned a badge!")
+        flash("Wow! You've created your three habits and earned a badge!")
 
     # put information in dictionary to send back as json response
-    habit_to_send = {"habit_id": habit.habit_id,
-                     "habit_name": habit.habit_name,
-                     "current_streak": habit.current_streak,
-                     "max_streak": habit.max_streak,
-                     "frequency": habit.frequency,
-                     "time_period": habit.time_period
-                     }
+    # habit_to_send = {"habit_id": habit.habit_id,
+    #                  "habit_name": habit.habit_name,
+    #                  "current_streak": habit.current_streak,
+    #                  "max_streak": habit.max_streak,
+    #                  "frequency": habit.frequency,
+    #                  "time_period": habit.time_period
+    #                  }
     
-    return jsonify(habit_to_send)
+    # return jsonify(habit_to_send)
+    return redirect("/progress")
 
 
 @app.route("/create_record", methods=["POST"])
