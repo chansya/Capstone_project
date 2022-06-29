@@ -306,17 +306,6 @@ def create_record():
     return redirect("/progress")
 
 
-@app.route("/all_habits")
-def view_habits():
-    """View a list of habits for a user."""
-    user = User.get_by_email(session.get("user_email"))
-    
-    habits = user.habits
-    badges = Badge.query.filter(Badge.user_id==user.user_id).order_by(Badge.img_url).all()
-
-   
-    return render_template("all_habits.html", user=user, habits=habits,badges=badges)
-
 @app.route("/habits")
 def react_view_habits():
     """View all habits."""
@@ -368,17 +357,6 @@ def react_remove_record(record_id):
     return jsonify({'status':'success'})
   
 
-@app.route("/<habit_id>/remove_habit")
-def remove_habit(habit_id):
-    """Remove a habit and all its related records."""
-    Record.query.filter_by(habit_id=habit_id).delete()
-    habit = Habit.get_by_id(habit_id)
-    db.session.delete(habit)
-    db.session.commit()
-
-    return redirect('/all_habits')
-
-
 @app.route("/react/<habit_id>/records")
 def react_get_records(habit_id):
     user = User.get_by_email(session["user_email"])
@@ -395,38 +373,6 @@ def react_get_records(habit_id):
             'record_date': record.record_date})
 
     return jsonify({'records': records_to_send})
-
-
-@app.route("/<habit_id>/records")
-def view_records(habit_id):
-    """View all records for a habit."""
-    user = User.get_by_email(session["user_email"])
-    habits=user.habits
-    habit = Habit.get_by_id(habit_id)
-    records = Record.get_by_habit(habit_id)
-    recordsss = habit.records
-    
-    return render_template("all_records.html", user=user, habit=habit, habits=habits, records=records)
-
-
-@app.route("/<record_id>/remove_record")
-def remove_record(record_id):
-    """Remove a record."""
-    record = Record.get_by_id(record_id)
-    habit_id = record.habit.habit_id
-    db.session.delete(record)
-    db.session.commit()
-
-    return redirect(f"/{habit_id}/records")
-
-
-@app.route("/all_badges")
-def view_badges():
-    """View all the badges for a user."""
-    user = User.get_by_email(session["user_email"])
-    habits = user.habits
-    badges = Badge.get_by_user(user.user_id)
-    return render_template("all_badges.html", user=user, badges=badges, habits=habits)
 
 
 @app.route("/chart_data.json")
