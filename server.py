@@ -93,27 +93,21 @@ def signup():
             db.session.commit()
             session["user_email"] = user.email
             
-            # Create badge 1 for sign up
-            badge1 = Badge.create(user.user_id, "static/img/1.png", "Our New Star", "Register an account")
-            badge2 = Badge.create(user.user_id, "static/img/2bw.png", "First Step", "Create first habit")
-            badge3 = Badge.create(user.user_id, "static/img/3bw.png", "From 0 To 1", "Create first record")
-            badge4 = Badge.create(user.user_id, "static/img/4bw.png", "Multi-tasker", "Create 3 habits")
-            badge5 = Badge.create(user.user_id, "static/img/5bw.png", "5-Star Records", "Create 5 records")
-            badge6 = Badge.create(user.user_id, "static/img/6bw.png", "Perfect 10", "Create 10 records")
-            badge7 = Badge.create(user.user_id, "static/img/7bw.png", "Up We go", "Reach 7 streaks")
-            badge8 = Badge.create(user.user_id, "static/img/8bw.png", "Unstoppable", "Reach 30 streaks")
-            badge9 = Badge.create(user.user_id, "static/img/9bw.png", "Streak Master", "Reach 100 streak")
-            
-            
-            db.session.add(badge1)
-            db.session.add(badge2)
-            db.session.add(badge3)
-            db.session.add(badge4)
-            db.session.add(badge5)
-            db.session.add(badge6)
-            db.session.add(badge7)
-            db.session.add(badge8)
-            db.session.add(badge9)
+            # Create potential badges for users
+            badge_names = ["Our New Star","First Step", "From 0 To 1", "Multi-tasker", 
+            "5-Star Records", "Perfect 10","Up We go", "Unstoppable", "Streak Master" ]
+            badge_msg = ["Register an account","Create first habit","Create first record","Create 3 habits", 
+            "Create 5 records","Create 10 records","Reach 7 streaks","Reach 30 streaks", "Reach 100 streak"]
+
+            for i in range(1, 10):
+                badge = Badge.create(user.user_id, f"static/img/{i}bw.png", badge_names[i-1], badge_msg[i-1])
+                db.session.add(badge)
+                db.session.commit()
+
+            # Activate badge 1
+            badge1 = Badge.query.filter(Badge.user_id==user.user_id,
+                                 Badge.img_url=="static/img/1bw.png").first()
+            badge1.img_url = "static/img/1.png"
             db.session.commit()
             flash("Yay! You've earned a badge for creating an account! Check it under your profile.")
             return redirect("/progress")
