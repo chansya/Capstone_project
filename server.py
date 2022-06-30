@@ -370,7 +370,7 @@ def react_get_records(habit_id):
             'record_id':record.record_id,
             'notes':record.notes,
             'img_url':record.img_url,
-            'record_date': record.record_date})
+            'record_date': datetime.strftime(record.record_date,'%Y-%m-%d')})
 
     return jsonify({'records': records_to_send})
 

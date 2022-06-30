@@ -1,6 +1,5 @@
 'use strict';
 
-
 function Habits(){
 
     // useState hook to set habits to empty array as initial value
@@ -19,10 +18,11 @@ function Habits(){
 
     // populate habit elements from habit list fetched
     const habitEls = habits.map((habit)=>(
+
         <div key={habit.habit_id}>
         
         <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
-        <button className="btn btn-light" onClick={()=>removeHabit(habit.habit_id)}> 
+        <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
         <img src="static/img/trash.svg" alt="trash">
         </img></button>
         </div>))
@@ -43,21 +43,21 @@ function Habits(){
         };
     }
     
-
     // fetch record data when habit is selected
     function updateRecords(id){
         console.log(`/react/${id}/records`)
         fetch(`/react/${id}/records`)
             .then((response)=>response.json())
             .then((result)=>{
-                console.log(result);
+                // console.log(result);
                 setRecords(result.records);}
                 );
     }
-    console.log("HABIT Records!")
-    console.log(records)
 
+    // remove record when remove button is clicked
     function removeRecord(id){
+        console.log("Record ID")
+        console.log(id)
         let confirmRemove = confirm("Are you sure about removing this record?")
         if (confirmRemove) {
             fetch(`/react/remove_record/${id}`)
@@ -79,34 +79,37 @@ function Habits(){
         recordList.push(
             <Record
             key = {record.record_id}
+            record_id = {record.record_id}
             record_date = {record.record_date}
             notes = {record.notes}
             img_url = {record.img_url}
+            removeRecord = {removeRecord}
             />,
-            <button className="btn btn-light" onClick={()=>removeRecord(record.record_id)}> 
-            <img src="static/img/trash.svg" alt="trash">
-            </img></button>
+            // <button className="btn btn-light" onClick={()=>removeRecord(record.record_id)}> 
+            // <img src="static/img/trash.svg" alt="trash">
+            // </img></button>
         )
-        console.log(record.img_url)
     }
-
+    
     return (
         <React.Fragment>
-            <div className="row">
-            <div className="col-4">
-                <h4>Habits</h4>
-                
-                
-                <div>{habitEls}</div>
-            </div>
+            {/* TOP section */}
+            <section className ="py-5 text-center container">
+                <div className ="row py-lg-5">
+                    <div className ="col-lg-6 col-md-8 mx-auto">
+                        <h1 className ="fw-light">MY RECORDS</h1>
+                        <p className ="lead text-muted"></p>
+                        {habitEls}
+                    </div>
+                </div>
+            </section>
 
-            <div className="col-8">
-                <h4>Records</h4>
-                <div>{recordList}</div>
+            {/* RECORD SECTION */}
+            <div className="container">
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">               
+                    {recordList}
+                </div>
             </div>
-            </div>
-            
-            
         </React.Fragment>
         );
 }
@@ -114,15 +117,25 @@ function Habits(){
 // Single record component
 function Record(props){
     return (
-        <div>
-            <p>{props.record_date}</p>
-            <p>Notes: {props.notes}</p>
-            <img src={props.img_url} alt="record_image" width="200px"/>
+        <div className="col">
+            <div className="card shadow-sm">
+                <img src={props.img_url} className="card-img-top" alt="record-image"/>
+                <div className="card-body">
+                <p className="card-text">{props.notes}</p>
+                <div className="d-flex justify-content-between align-items-center">
+                    <div className="btn-group">
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => { props.removeRecord(props.record_id) }}>
+                        <small>Remove</small>
+                    </button>
+                    </div>
+                    <small className="text-muted">{props.record_date}</small>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
    
-
 
 ReactDOM.render(
     <Habits />, 

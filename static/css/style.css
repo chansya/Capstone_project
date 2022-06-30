@@ -14,3 +14,7 @@ body{
 .badges{
     width: 6rem;
 }
+
+#remove-habit-btn{
+    display: none;
+}
