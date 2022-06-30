@@ -16,6 +16,7 @@ logDate.max = new Date().toLocaleDateString('en-ca')
 fetch('/chart_data.json')
     .then((response) => response.json())
     .then((responseJson) => {
+
         // create an array of objects with habit name as key and list of records as value
         let dataArr = [];
         for(const [habit_name, daily_records] of Object.entries(responseJson)){
@@ -93,4 +94,21 @@ window.onload = (event) => {
       let bsAlert = new bootstrap.Toast(myAlert);
       bsAlert.show();
     }
+    fetch('/api/quotes')
+    .then((response) => response.json())
+    .then((quoteData) => {
+        console.log(quoteData)
+        let quote= quoteData[0]['q'];
+        let author = quoteData[0]['a'];
+        document.querySelector('#quote')
+                .textContent = `'${quote}' - ${author}`;
+    })
+
   };
+
+
+  // let quoteBtn=document.querySelector('#quote-btn');
+  // quoteBtn.addEventListener('click', (evt)=>{
+  //   evt.preventDefault();
+    
+  // })

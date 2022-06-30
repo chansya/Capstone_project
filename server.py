@@ -6,6 +6,7 @@ from flask import Flask, jsonify, render_template, render_template_string, reque
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, timedelta
 import os
+import requests
 from passlib.hash import argon2
 import cloudinary.uploader
 from jinja2 import StrictUndefined
@@ -403,7 +404,23 @@ def get_chart_data():
 
         daily_habit_dict[habit.habit_name] = daily_record_data
      
+
     return jsonify(daily_habit_dict)
+
+@app.route("/api/quotes")
+def get_quotes():
+    url = 'https://zenquotes.io/api/today'
+    
+    headers = {'content-type': 'application/json',}
+
+    res_obj = requests.get(url, headers=headers)
+    
+    quotes=res_obj.json()
+
+    print(quotes)
+    return jsonify(quotes)
+    
+
 
 
 @app.route("/logout")
@@ -411,6 +428,7 @@ def process_logout():
     """Log user out and clear the session."""
     del session["user_email"]
     return redirect("/")
+
 
 
 if __name__ == "__main__":
