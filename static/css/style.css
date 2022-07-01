@@ -4,6 +4,7 @@
 
 body{
     font-family: 'Montserrat', sans-serif;
+    background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
 }
 
 #slogan{
@@ -15,6 +16,6 @@ body{
     width: 6rem;
 }
 
-#remove-habit-btn{
+.rm-habit{
     display: none;
 }

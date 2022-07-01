@@ -65,7 +65,7 @@ def login():
         # Create flash message reminder
         if missed_entries != "":
             flash(
-                f"There seems to be missed entries for {missed_entries} did you forget to log it?")
+                f"There seems to be missed entries for {missed_entries} remember to log it if you haven't yet!")
         else:
             flash(f"Welcome back {user.name}! How is it going?")
         return redirect("/progress")
@@ -302,6 +302,15 @@ def create_record():
     return redirect("/progress")
 
 
+@app.route("/manage")
+def view_profile():
+    user = User.get_by_email(session["user_email"])
+    habits = user.habits
+    badges = Badge.query.filter(
+        Badge.user_id == user.user_id).order_by(Badge.img_url).all()
+    return render_template("profile.html", user=user, habits=habits, badges=badges)
+
+
 @app.route("/habits")
 def view_habits():
     """View all habits."""
@@ -314,7 +323,7 @@ def view_habits():
 
 
 @app.route("/habits.json")
-def get_habits_data():
+def get_all_habits():
     """Return a list of habits for a user as json."""
     user = User.get_by_email(session.get("user_email"))
     habits = Habit.get_by_user(user.user_id)
@@ -334,7 +343,7 @@ def get_habits_data():
 
 
 @app.route("/records.json")
-def get_records_data():
+def get_all_records():
     """Return a list of records for a user as json."""
     user = User.get_by_email(session.get("user_email"))
 
@@ -353,7 +362,7 @@ def get_records_data():
 
 
 @app.route("/remove_habit/<habit_id>")
-def react_remove_habit(habit_id):
+def remove_habit(habit_id):
     """Remove a habit and all its related records."""
     Record.query.filter_by(habit_id=habit_id).delete()
     habit = Habit.get_by_id(habit_id)
@@ -363,7 +372,7 @@ def react_remove_habit(habit_id):
 
 
 @app.route("/remove_record/<record_id>")
-def react_remove_record(record_id):
+def remove_record(record_id):
     """Remove a records."""
     record = Record.get_by_id(record_id)
     db.session.delete(record)
@@ -372,7 +381,7 @@ def react_remove_record(record_id):
 
 
 @app.route("/<habit_id>/records")
-def react_get_records(habit_id):
+def get_habit_records(habit_id):
     habit = Habit.get_by_id(habit_id)
     records = Record.query.filter(Record.habit_id == habit_id).order_by(
         Record.record_date.desc()).all()
@@ -429,14 +438,10 @@ def get_chart_data():
 @app.route("/api/quotes")
 def get_quotes():
     url = 'https://zenquotes.io/api/today'
-
-    headers = {'content-type': 'application/json', }
-
+    headers = {'content-type': 'application/json'}
     res_obj = requests.get(url, headers=headers)
-
     quotes = res_obj.json()
 
-    print(quotes)
     return jsonify(quotes)
 
 

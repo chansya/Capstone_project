@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<div class="col-lg-8 mx-auto p-3 py-md-5">
+    <header class="d-flex align-items-center pb-3 mb-3 border-bottom">
+      <a href="#" class="d-flex align-items-center text-dark text-decoration-none">
+        <i class="bi bi-person-lines-fill" ></i>
+        <h3>Manage Account</h3>
+      </a>
+    </header>
+  
+    <main>
+      <!-- <div class="fs-8 col-md-8">
+        <p>PHOTO?</p>
+        <p>Name: {{user.name}}</p>
+        <p>Email:  {{user.email }}</p>
+        <p></p>
+      </div>
+  
+      <div class="mb-3">
+        <button class="btn btn-secondary">Save</button>
+    </div>
+  
+      <hr class="col-3 col-md-2 mb-5"> -->
+  
+      <div class="row g-5">
+        <div class="col-md-6">
+          <h5 class="">My Details <sup id="edit_details"><i class="bi bi-pencil-square"></i></sup></h5>
+          <hr>
+          <ul class="icon-list ps-0">
+            
+            <li class="d-flex align-items-start mb-1">Name: {{ user.name }}</li>
+            <li class="d-flex align-items-start mb-1">Email: {{ user.email }}</li>
+            <li class="d-flex align-items-start mb-1">Change password</li>
+            
+          </ul>
+        </div>
+  
+        <div class="col-md-6">
+          <h5>My Habits <sup id="edit-habits"><i class="bi bi-pencil-square"></i></sup></h5>
+          <hr>
+          <ul class="icon-list ps-0">
+            {% for habit in habits %}
+            <li class="d-flex align-items-start mb-1 habit-item" id="{{ habit.habit_id }}">
+                {{ habit.habit_name }}
+                <span> </span>
+                <span class="rm-habit"><i class="bi bi-x-square"></i></span>                
+                </button>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </main>
+    
+  </div>
+
+
+{% endblock %}
+
+{% block after_body %}
+<script src="static/js/profile.js"></script>
+{% endblock %}
