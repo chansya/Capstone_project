@@ -16,27 +16,34 @@ function Habits(){
                 );
     },[]);
 
+    React.useEffect(()=>{
+        fetch('/records.json')
+            .then((response)=>response.json())
+            .then((result)=>{
+                console.log(result);
+                setRecords(result.records)}
+                );
+    },[]);
+
     // populate habit elements from habit list fetched
     const habitEls = habits.map((habit)=>(
-
-        <div key={habit.habit_id}>
-        
-        <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
-        <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
-        <img src="static/img/trash.svg" alt="trash">
-        </img></button>
+        <div key={habit.habit_id}>       
+            <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
+            <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
+            <img src="static/img/trash.svg" alt="trash">
+            </img></button>
         </div>))
     
     // remove habit when trash button is clicked
-    function removeHabit(id){
+    function removeHabit(habit_id){
         let confirmRemove = confirm("Are you sure about removing this habit? All records will be removed too.")
         if (confirmRemove) {
-            fetch(`/react/remove_habit/${id}`)
+            fetch(`/remove_habit/${habit_id}`)
             .then((response)=>response.json())
             .then((result) => {
                 if(result.status === 'success'){
                     // setting habit list to filtered list
-                    const newList = habits.filter((habit)=>habit.habit_id!==id);
+                    const newList = habits.filter((habit)=>habit.habit_id!==habit_id);
                     setHabits(newList)
                 }
             });
@@ -44,28 +51,25 @@ function Habits(){
     }
     
     // fetch record data when habit is selected
-    function updateRecords(id){
-        console.log(`/react/${id}/records`)
-        fetch(`/react/${id}/records`)
+    function updateRecords(habit_id){
+
+        fetch(`/${habit_id}/records`)
             .then((response)=>response.json())
             .then((result)=>{
-                // console.log(result);
                 setRecords(result.records);}
                 );
     }
 
     // remove record when remove button is clicked
-    function removeRecord(id){
-        console.log("Record ID")
-        console.log(id)
+    function removeRecord(rec_id){
         let confirmRemove = confirm("Are you sure about removing this record?")
         if (confirmRemove) {
-            fetch(`/react/remove_record/${id}`)
+            fetch(`/remove_record/${rec_id}`)
             .then((response)=>response.json())
             .then((result) => {
                 if(result.status === 'success'){
                     // setting habit list to filtered list
-                    const newList = records.filter((record)=>record.record_id!==id);
+                    const newList = records.filter((record)=>record.record_id!==rec_id);
                     setRecords(newList);
                 }
             });
@@ -80,6 +84,7 @@ function Habits(){
             <Record
             key = {record.record_id}
             record_id = {record.record_id}
+            habit_name = {record.habit_name}
             record_date = {record.record_date}
             notes = {record.notes}
             img_url = {record.img_url}
@@ -121,6 +126,7 @@ function Record(props){
             <div className="card shadow-sm">
                 <img src={props.img_url} className="card-img-top" alt="record-image"/>
                 <div className="card-body">
+                <h6 class="card-title">{props.habit_name}</h6>
                 <p className="card-text">{props.notes}</p>
                 <div className="d-flex justify-content-between align-items-center">
                     <div className="btn-group">
