@@ -27,28 +27,29 @@ function Habits(){
 
     // populate habit elements from habit list fetched
     const habitEls = habits.map((habit)=>(
-        <div key={habit.habit_id}>       
+        <span key={habit.habit_id}>       
             <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
-            <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
+            {/* <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
             <img src="static/img/trash.svg" alt="trash">
-            </img></button>
-        </div>))
+            </img></button> */}
+            &nbsp;    
+        </span> ))
     
     // remove habit when trash button is clicked
-    function removeHabit(habit_id){
-        let confirmRemove = confirm("Are you sure about removing this habit? All records will be removed too.")
-        if (confirmRemove) {
-            fetch(`/remove_habit/${habit_id}`)
-            .then((response)=>response.json())
-            .then((result) => {
-                if(result.status === 'success'){
-                    // setting habit list to filtered list
-                    const newList = habits.filter((habit)=>habit.habit_id!==habit_id);
-                    setHabits(newList)
-                }
-            });
-        };
-    }
+    // function removeHabit(habit_id){
+    //     let confirmRemove = confirm("Are you sure about removing this habit? All records will be removed too.")
+    //     if (confirmRemove) {
+    //         fetch(`/remove_habit/${habit_id}`)
+    //         .then((response)=>response.json())
+    //         .then((result) => {
+    //             if(result.status === 'success'){
+    //                 // setting habit list to filtered list
+    //                 const newList = habits.filter((habit)=>habit.habit_id!==habit_id);
+    //                 setHabits(newList)
+    //             }
+    //         });
+    //     };
+    // }
     
     // fetch record data when habit is selected
     function updateRecords(habit_id){
