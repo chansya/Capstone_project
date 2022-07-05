@@ -125,7 +125,7 @@ function Record(props){
     return (
         <div className="col">
             <div className="card shadow-sm">
-                <img src={props.img_url} className="card-img-top" alt="record-image"/>
+                <img src={props.img_url} className="card-img-top img-fluid" alt="record-image"/>
                 <div className="card-body">
                 <h6 class="card-title">{props.habit_name}</h6>
                 <p className="card-text">{props.notes}</p>

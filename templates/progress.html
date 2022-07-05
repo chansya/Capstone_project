@@ -135,14 +135,14 @@
             {% for record in recent_recs %}
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row g-0">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   {% if record.img_url %}
-                  <img src="{{ record.img_url }}" class="img-fluid rounded-start" alt="record_image">
+                  <img src="{{ record.img_url }}" class="card-img-top img-fluid rounded-start" alt="record_image">
                   {% else %}
-                  <img src="static/img/thumbsUp.jpg" class="img-fluid rounded-start" alt="placeholderImg">
+                  <img src="static/img/thumbsUp.jpg" class="card-img-top img-fluid rounded-start" alt="placeholderImg">
                   {% endif %}
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6">
                   <div class="card-body">
                     <h5 class="card-title">{{ record.habit.habit_name }}</h5>
                     <p class="card-text">{{ record.notes }}</p>
