@@ -38,10 +38,10 @@
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th scope="col" class="table-dark"></th>
-                    <th scope="col" class="table-dark">Current Streak</th>
-                    <th scope="col" class="table-dark">Longest Streak</th>
-                    <th scope="col" class="table-dark">Total Record</th>
+                    <th scope="col" class="table-light"></th>
+                    <th scope="col" class="table-light">Current Streak</th>
+                    <th scope="col" class="table-light">Longest Streak</th>
+                    <th scope="col" class="table-light">Total Record</th>
                   </tr>
                 </thead>
                 <tbody id="habit-table">
@@ -131,28 +131,28 @@
         </h2>
         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
           <div class="accordion-body">
-            {% if habits %}
-            {% for record in recent_recs %}
-            <div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-6">
-                  {% if record.img_url %}
-                  <img src="{{ record.img_url }}" class="card-img-top img-fluid rounded-start" alt="record_image">
-                  {% else %}
-                  <img src="static/img/thumbsUp.jpg" class="card-img-top img-fluid rounded-start" alt="placeholderImg">
-                  {% endif %}
-                </div>
-                <div class="col-md-6">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ record.habit.habit_name }}</h5>
-                    <p class="card-text">{{ record.notes }}</p>
-                    <p class="card-text"><small class="text-muted">{{ record.record_date }}</small></p>
+            {% if recent_recs %}
+              {% for record in recent_recs %}
+              <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                  <div class="col-md-6">
+                    {% if record.img_url %}
+                    <img src="{{ record.img_url }}" class="card-img-top img-fluid rounded-start" alt="record_image">
+                    {% else %}
+                    <img src="static/img/thumbsUp.jpg" class="card-img-top img-fluid rounded-start" alt="placeholderImg">
+                    {% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ record.habit.habit_name }}</h5>
+                      <p class="card-text">{{ record.notes }}</p>
+                      <p class="card-text"><small class="text-muted">{{ record.record_date }}</small></p>
+                    </div>
                   </div>
                 </div>
+                
               </div>
-              
-            </div>
-            {% endfor %}
+              {% endfor %}
             {% else %}
             <p>Hmm..there is no record yet. You can log a habit by clicking on the calendar!</p>
             {% endif %}

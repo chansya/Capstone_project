@@ -29,31 +29,18 @@ function Habits(){
     const habitEls = habits.map((habit)=>(
         <span key={habit.habit_id}>       
             <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
-            {/* <button className="btn btn-light" id="remove-habit-btn" onClick={()=>removeHabit(habit.habit_id)}> 
-            <img src="static/img/trash.svg" alt="trash">
-            </img></button> */}
             &nbsp;    
         </span> ))
     
-    // remove habit when trash button is clicked
-    // function removeHabit(habit_id){
-    //     let confirmRemove = confirm("Are you sure about removing this habit? All records will be removed too.")
-    //     if (confirmRemove) {
-    //         fetch(`/remove_habit/${habit_id}`)
-    //         .then((response)=>response.json())
-    //         .then((result) => {
-    //             if(result.status === 'success'){
-    //                 // setting habit list to filtered list
-    //                 const newList = habits.filter((habit)=>habit.habit_id!==habit_id);
-    //                 setHabits(newList)
-    //             }
-    //         });
-    //     };
-    // }
-    
     // fetch record data when habit is selected
     function updateRecords(habit_id){
-
+        if(habit_id === 'all'){
+            fetch(`/records.json`)
+            .then((response)=>response.json())
+            .then((result)=>{
+                setRecords(result.records);}
+                );
+        }
         fetch(`/${habit_id}/records`)
             .then((response)=>response.json())
             .then((result)=>{
@@ -100,17 +87,20 @@ function Habits(){
     return (
         <React.Fragment>
             {/* TOP section */}
-            <section className ="py-5 text-center container">
-                <div className ="row py-lg-5">
+            <section className ="py-2 text-center container">
+                <div className ="row py-lg-4">
                     <div className ="col-lg-6 col-md-8 mx-auto">
                         <h1 className ="fw-light">MY RECORDS</h1>
                         <p className ="lead text-muted"></p>
+                        <span>       
+                        <button className="btn btn-light" onClick={()=>updateRecords('all')}>All</button>&nbsp;    
+                        </span> 
                         {habitEls}
                     </div>
                 </div>
             </section>
 
-            {/* RECORD SECTION */}
+            {/* RECORDS SECTION */}
             <div className="container">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">               
                     {recordList}
