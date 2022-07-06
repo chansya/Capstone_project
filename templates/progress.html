@@ -15,8 +15,7 @@
 {% endblock %}
 
 {% block body %}
-
-<div class="container">
+<div class="container pt-3">
   
   <div class="row">
     <!-- Calendar -->
@@ -76,7 +75,11 @@
                     {% for habit in weekly_habits %}
                       <tr>
                         <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per week">{{habit.habit_name}}</th>
-                        <td>{{ habit.current_streak }}</td>
+                        {% if habit.current_streak == 0 %}
+                        <td><img src="static/img/Misc/fire_bw.png" alt="fire-bw">&nbsp;{{ habit.current_streak }}</td>
+                        {% else %}
+                        <td><img src="static/img/Misc/fire.png" alt="fire">&nbsp;{{ habit.current_streak }}</td>
+                        {% endif %}
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
                       </tr>
@@ -93,7 +96,11 @@
                     {% for habit in monthly_habits %}
                       <tr>
                         <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
-                        <td>{{ habit.current_streak }}</td>
+                        {% if habit.current_streak == 0 %}
+                        <td><img src="static/img/Misc/fire_bw.png" alt="fire-bw">&nbsp;{{ habit.current_streak }}</td>
+                        {% else %}
+                        <td><img src="static/img/Misc/fire.png" alt="fire">&nbsp;{{ habit.current_streak }}</td>
+                        {% endif %}
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
                       </tr>

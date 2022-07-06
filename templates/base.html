@@ -14,7 +14,7 @@
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Peta:wght@500;600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
 
     <!-- Own stylesheet -->
     <link rel="stylesheet" href="static/css/style.css">
@@ -31,7 +31,7 @@
     {% if not session.get("user_email") %}
     <nav class="navbar navbar-expand-sm navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img id="logo" src="static/img/Misc/sticky-note.png" alt="sticky">&nbsp;STICK</a>
+            <a class="navbar-brand ms-sm-5" href="/"><i class="bi bi-stickies"></i>&nbsp;STICK</a>
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -39,7 +39,7 @@
                 <div class="navbar-nav">
                     <!-- <a href="/" class="nav-item nav-link active">Home</a> -->
                 </div>
-                <div class="navbar-nav ms-auto">
+                <div class="navbar-nav ms-auto me-5">
                     <a href="/login" class="nav-item nav-link">Log in</a>
                     <a href="/signup" class="nav-item nav-link">Sign up</a>
                 </div>
@@ -51,12 +51,12 @@
     <!-- nav after log in -->
     <nav class="navbar navbar-expand-md">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/progress"><i class="bi bi-stickies"></i> STICK</a>
+          <a class="navbar-brand ms-sm-5" href="/progress"><i class="bi bi-stickies"></i> STICK</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto me-5">
               <!-- Modal form for new habit -->
               <li class="nav-item">
                 <!-- Button triggers the modal -->
