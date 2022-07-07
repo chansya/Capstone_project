@@ -5,6 +5,7 @@ function Habits(){
     // useState hook to set habits to empty array as initial value
     const [habits, setHabits] = React.useState([])
     const [records, setRecords] = React.useState([])
+    const [reminder, setReminder] = React.useState('')
 
     // fetch data from backend then update habits using setHabits
     React.useEffect(()=>{
@@ -26,7 +27,7 @@ function Habits(){
     },[]);
 
     // populate habit elements from habit list fetched
-    const habitEls = habits.map((habit)=>(
+    const habitList = habits.map((habit)=>(
         <span key={habit.habit_id}>       
             <button className="btn btn-light" onClick={()=>updateRecords(habit.habit_id)}>{habit.habit_name}</button>
             &nbsp;    
@@ -38,14 +39,15 @@ function Habits(){
             fetch(`/records.json`)
             .then((response)=>response.json())
             .then((result)=>{
-                setRecords(result.records);}
+                setRecords(result.records);
+                setReminder('');}
                 );
         }
         fetch(`/${habit_id}/records`)
             .then((response)=>response.json())
             .then((result)=>{
-                setRecords(result.records);}
-                );
+                setRecords(result.records);
+                setReminder(result.reminder)});
     }
 
     // remove record when remove button is clicked
@@ -95,8 +97,10 @@ function Habits(){
                         <span>       
                         <button className="btn btn-light" onClick={()=>updateRecords('all')}>All</button>&nbsp;    
                         </span> 
-                        {habitEls}
+                        {habitList}
                     </div>
+                    {/* personal reminder component */}
+                    <div class="mt-4">{reminder}</div>
                 </div>
             </section>
 

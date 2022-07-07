@@ -4,7 +4,7 @@
 
 body{
     font-family: 'Montserrat', sans-serif;
-    background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+    /* background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%); */
     /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
     /* background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%); */
 }
@@ -74,4 +74,8 @@ body{
 .index:hover:after {
     transform: scaleX(1);
     transform-origin: bottom left;
+}
+
+#footer-logo{
+    font-family: 'Lexend Peta', sans-serif;
 }

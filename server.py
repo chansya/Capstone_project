@@ -1,11 +1,11 @@
 
 from calendar import week
 import json
-from math import remainder
 from unittest import result
 from flask import Flask, jsonify, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, timedelta
+import random
 import os
 import requests
 from passlib.hash import argon2
@@ -235,7 +235,8 @@ def create_record():
         # url for the uploaded image
         img_url = result['secure_url']
     else:
-        img_url = "static/img/Record_img/thumbsUp.jpg"
+        rand = random.randint(1,5)
+        img_url = f"static/img/Misc/mountain{rand}.jpg"
 
     # Create new record object
     record = Record.create(habit_id, finished, notes, img_url, record_date)
@@ -411,7 +412,8 @@ def get_habit_records(habit_id):
              'img_url': record.img_url,
              'record_date': datetime.strftime(record.record_date, '%Y-%m-%d')})
 
-    return jsonify({'records': records_to_send})
+    return jsonify({'records': records_to_send,
+                    'reminder': f"'{habit.reminder}'"})
 
 
 @app.route("/chart_data.json")
@@ -452,7 +454,7 @@ def get_chart_data():
 def get_quotes():
     """Return daily quote from API call."""
 
-    url = 'https://zenquotes.io/api/today'
+    url = 'https://zenquotes.io/api/random'
     headers = {'content-type': 'application/json'}
     res_obj = requests.get(url, headers=headers)
     quotes = res_obj.json()
