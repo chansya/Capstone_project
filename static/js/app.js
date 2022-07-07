@@ -98,17 +98,10 @@ window.onload = (event) => {
     .then((response) => response.json())
     .then((quoteData) => {
         console.log(quoteData)
-        let quote= quoteData[0]['q'];
-        let author = quoteData[0]['a'];
+        let quote= quoteData['quote'];
+        let author = quoteData['author'];
         document.querySelector('#quote')
                 .textContent = `'${quote}' - ${author}`;
     })
 
   };
-
-
-  // let quoteBtn=document.querySelector('#quote-btn');
-  // quoteBtn.addEventListener('click', (evt)=>{
-  //   evt.preventDefault();
-    
-  // })

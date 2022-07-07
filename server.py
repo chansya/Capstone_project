@@ -454,10 +454,18 @@ def get_chart_data():
 def get_quotes():
     """Return daily quote from API call."""
 
-    url = 'https://zenquotes.io/api/random'
+    # url = 'https://zenquotes.io/api/random'
+    # headers = {'content-type': 'application/json'}
+    # res_obj = requests.get(url, headers=headers)
+    # quotes = res_obj.json()
+
+    url = 'https://api.goprogram.ai/inspiration'
     headers = {'content-type': 'application/json'}
     res_obj = requests.get(url, headers=headers)
     quotes = res_obj.json()
+
+    print('*****')
+    print(quotes)
 
     return jsonify(quotes)
 
