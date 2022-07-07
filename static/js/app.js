@@ -85,9 +85,8 @@ fetch('/chart_data.json')
 
     );
 
-// show chart upon button click
 
-
+// load toast message and fetch quotes from API call upon page load
 window.onload = (event) => {
     let myAlert = document.querySelectorAll('.toast')[0];
     if (myAlert) {
@@ -103,5 +102,4 @@ window.onload = (event) => {
         document.querySelector('#quote')
                 .textContent = `'${quote}' - ${author}`;
     })
-
   };

@@ -23,10 +23,10 @@
       <div id="calendar"></div>
     </div>
     
-    <div class="accordion col-md-6" id="accordionExample">
+    <div class="accordion col-md-6">
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <button class="accordion-button" id="overview-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
             Overview
           </button>
         </h2>
@@ -38,15 +38,17 @@
                 <thead>
                   <tr>
                     <th scope="col" class="table-light"></th>
-                    <th scope="col" class="table-light">Current Streak</th>
-                    <th scope="col" class="table-light">Longest Streak</th>
-                    <th scope="col" class="table-light">Total Record</th>
+                    <th scope="col" class="table-light">Current</th>
+                    <th scope="col" class="table-light">Longest</th>
+                    <th scope="col" class="table-light">Total</th>
+                    <th scope="col" class="table-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Make a record for today without notes and photo.">1-Click Log</th>
                   </tr>
                 </thead>
                 <tbody id="habit-table">
                   {% if daily_habits %}
                   <tr class="table-secondary" id="daily-row">
                     <th scope="row">Daily</th>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -61,6 +63,14 @@
                       {% endif %}
                       <td>{{ habit.max_streak }}</td>
                       <td>{{ habit.records|length }}</td>
+                      <td>
+                        <form action="/quick_log" method="POST">
+                          <input class="form-control" type="hidden" name="habit_id" value="{{ habit.habit_id }}">
+                          <button class="btn quick-log" type="submit">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                        </form>
+                      </td>
                     </tr>
                   {% endfor %}
                   {% endif %}
@@ -68,6 +78,7 @@
                   {% if weekly_habits %}
                     <tr class="table-secondary" id="weekly-row">
                       <th scope="row">Weekly</th>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -82,6 +93,14 @@
                         {% endif %}
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
+                        <td>
+                          <form action="/quick_log" method="POST">
+                            <input class="form-control" type="hidden" name="habit_id" value="{{ habit.habit_id }}">
+                            <button class="btn quick-log" type="submit">
+                              <i class="bi bi-check-circle"></i>
+                            </button>
+                          </form>
+                        </td>
                       </tr>
                     {% endfor %}
                     {% endif %}
@@ -89,6 +108,7 @@
                     {% if monthly_habits %}
                     <tr class="table-secondary" id="monthly-row">
                       <th scope="row">Monthly</th>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -103,6 +123,14 @@
                         {% endif %}
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
+                        <td>
+                          <form action="/quick_log" method="POST">
+                            <input class="form-control" type="hidden" name="habit_id" value="{{ habit.habit_id }}">
+                            <button class="btn quick-log" type="submit">
+                              <i class="bi bi-check-circle"></i>
+                            </button>
+                          </form>
+                        </td>
                       </tr>
                     {% endfor %}
                     {% endif %}
@@ -118,7 +146,7 @@
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <button class="accordion-button collapsed" id="chart-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
             Chart
           </button>
         </h2>
@@ -132,7 +160,7 @@
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingThree">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <button class="accordion-button collapsed" id="log-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
             Recent Logs
           </button>
         </h2>
@@ -168,8 +196,8 @@
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingFour">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-            Daily Quote
+          <button class="accordion-button collapsed" id="quote-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+            Inspiration
           </button>
         </h2>
           <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">

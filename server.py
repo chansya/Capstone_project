@@ -1,10 +1,11 @@
 
 from calendar import week
+from crypt import methods
 import json
 from unittest import result
 from flask import Flask, jsonify, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
-from datetime import datetime, timedelta
+from datetime import datetime, date
 import random
 import os
 import requests
@@ -298,6 +299,21 @@ def create_record():
     return redirect("/progress")
 
 
+@app.route("/quick_log", methods=["POST"])
+def quick_log():
+    habit_id = request.form.get("habit_id")
+    print("****")
+    print(habit_id)
+    record_date = date.today()
+    finished, notes, img_url= True, "", ""
+   
+    record = Record.create(habit_id, finished, notes, img_url, record_date)
+    db.session.add(record)
+    db.session.commit()
+
+    return redirect("/progress")
+
+
 @app.route("/manage")
 def view_profile():
     """View the user's profile."""
@@ -464,8 +480,6 @@ def get_quotes():
     res_obj = requests.get(url, headers=headers)
     quotes = res_obj.json()
 
-    print('*****')
-    print(quotes)
 
     return jsonify(quotes)
 
