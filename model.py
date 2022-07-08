@@ -1,8 +1,9 @@
 """ Models for habit building app. """
 
-from datetime import date, timedelta
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date, timedelta
 import pendulum
+from passlib.hash import argon2
 
 db = SQLAlchemy()
 
@@ -59,7 +60,6 @@ class Habit(db.Model):
     time_period = db.Column(db.String, nullable=False)
     current_streak = db.Column(db.Integer, nullable=False, default=0)
     max_streak = db.Column(db.Integer, nullable=False, default=0)
-    # start_date = db.Column(db.Date, nullable=False)
     reminder = db.Column(db.String, nullable=True)
 
 
@@ -83,8 +83,7 @@ class Habit(db.Model):
                    current_streak=current_streak,
                    max_streak=max_streak,
                    reminder=reminder)
-        #   start_date=start_date,
-        #   end_date=end_date)
+
 
     @classmethod
     def get_by_id(cls, habit_id):
@@ -495,6 +494,20 @@ class Badge(db.Model):
         """Return the count of badges for a specific user."""
         return cls.query.filter(Badge.user_id == user_id).count()
 
+
+def example_data():
+    """Create sample data for test database."""
+    hashed_pw = argon2.hash("test123")
+    today= date.today()
+    jane = User.create("Jane", "jane@doe.com", hashed_pw)
+    john = User.create("John", "john@doe.com", hashed_pw)
+
+    habit1= Habit.create(jane.user_id, "Test habit", 1, "daily", 0 , 0, "Test reminder")
+    record1=Record.create(habit1.habit_id, True, "test note","test img", today)
+    badge1=Badge.create(jane.user_id,"test img","img name","img msg")
+
+    db.session.add_all([jane,john, habit1,record1, badge1])
+    db.session.commit()
 
 def connect_to_db(app, db_uri="postgresql:///habits", echo=False):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_uri

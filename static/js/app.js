@@ -103,3 +103,4 @@ window.onload = (event) => {
                 .textContent = `'${quote}' - ${author}`;
     })
   };
+

@@ -1,8 +1,4 @@
 
-from calendar import week
-from crypt import methods
-import json
-from unittest import result
 from flask import Flask, jsonify, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, date
@@ -127,7 +123,7 @@ def signup():
 def view_progress():
     """View the progress page."""
 
-    user = User.get_by_email(session["user_email"])
+    user = User.get_by_email(session.get("user_email"))
     if user:
 
         habits = user.habits
@@ -302,10 +298,8 @@ def create_record():
 @app.route("/quick_log", methods=["POST"])
 def quick_log():
     habit_id = request.form.get("habit_id")
-    print("****")
-    print(habit_id)
     record_date = date.today()
-    finished, notes, img_url= True, "", ""
+    finished, notes, img_url= True, "", "static/img/Misc/mountain.jpg"
    
     record = Record.create(habit_id, finished, notes, img_url, record_date)
     db.session.add(record)
@@ -495,3 +489,6 @@ def process_logout():
 if __name__ == "__main__":
     connect_to_db(app)
     app.run(host="0.0.0.0", debug=True)
+
+
+

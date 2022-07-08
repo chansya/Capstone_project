@@ -1,6 +1,6 @@
 from unittest import TestCase
 from server import app
-from model import connect_to_db, db
+from model import connect_to_db, db, example_data
 from flask import session
 
 
@@ -15,96 +15,112 @@ class FlaskTestsBasic(TestCase):
 
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
-
+    
     def test_index(self):
         """Test homepage page."""
 
         result = self.client.get("/")
-        self.assertIn(b"Let's Make It Stick", result.data)
+        self.assertIn(b"Let's Make It STICK", result.data)
+
+
+class FlaskTestsDatabase(TestCase):
+    """Flask tests that use the database."""
+
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        # Get the Flask test client
+        self.client = app.test_client()
+        app.config['TESTING'] = True
+
+        # Connect to test database
+        connect_to_db(app, "postgresql:///testdb")
+
+        # Create tables and add sample data
+        db.create_all()
+        example_data()
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.remove()
+        db.drop_all()
+        db.engine.dispose()
 
     def test_login(self):
         """Test login page."""
 
         result = self.client.post("/login",
-                                  data={"user_email": "test@test.com", "password": "test123"},
+                                  data={"email": "jane@doe.com", "password": "test123"},
                                   follow_redirects=True)
         self.assertIn(b"Overview", result.data)
 
 
-# class FlaskTestsDatabase(TestCase):
-#     """Flask tests that use the database."""
+class FlaskTestsLoggedIn(TestCase):
+    """Flask tests with user logged in to session."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+    def setUp(self):
+        """Stuff to do before every test."""
 
-#         # Get the Flask test client
-#         self.client = app.test_client()
-#         app.config['TESTING'] = True
+        app.config['TESTING'] = True
+        app.config['SECRET_KEY'] = 'key'
+        self.client = app.test_client()
+        
+                # Connect to test database
+        connect_to_db(app, "postgresql:///testdb")
 
-#         # Connect to test database
-#         connect_to_db(app, "postgresql:///testdb")
+        # Create tables and add sample data
+        db.create_all()
+        example_data()
 
-#         # Create tables and add sample data
-#         db.create_all()
-#         example_data()
-
-#     def tearDown(self):
-#         """Do at end of every test."""
-
-#         db.session.remove()
-#         db.drop_all()
-#         db.engine.dispose()
-
-#     def test_departments_list(self):
-#         """Test departments page."""
-
-#         result = self.client.get("/departments")
-#         self.assertIn(b"Legal", result.data)
-
-#     def test_departments_details(self):
-#         """Test departments page."""
-
-#         result = self.client.get("/department/fin")
-#         self.assertIn(b"Phone: 555-1000", result.data)
+        # simulate user logging in 
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user_email'] = 'jane@doe.com'
 
 
-# class FlaskTestsLoggedIn(TestCase):
-#     """Flask tests with user logged in to session."""
+    def tearDown(self):
+        """Do at end of every test."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+        db.session.remove()
+        db.drop_all()
+        db.engine.dispose()
 
-#         app.config['TESTING'] = True
-#         app.config['SECRET_KEY'] = 'key'
-#         self.client = app.test_client()
+    def test_progress_page(self):
+        """Test profile page."""
 
-#         # simulate user logging in 
-#         with self.client as c:
-#             with c.session_transaction() as sess:
-#                 sess['user_id'] = 1
-
-#     def test_important_page(self):
-#         """Test important page."""
-
-#         result = self.client.get("/important")
-#         self.assertIn(b"You are a valued user", result.data)
+        result = self.client.get("/progress")
+        self.assertIn(b"Overview", result.data)
 
 
-# class FlaskTestsLoggedOut(TestCase):
-#     """Flask tests with user logged in to session."""
+class FlaskTestsLoggedOut(TestCase):
+    """Flask tests with user logged in to session."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+    def setUp(self):
+        """Stuff to do before every test."""
 
-#         app.config['TESTING'] = True
-#         self.client = app.test_client()
+        app.config['TESTING'] = True
+        self.client = app.test_client()
+        # Connect to test database
+        connect_to_db(app, "postgresql:///testdb")
 
-#     def test_important_page(self):
-#         """Test that user can't see important page when logged out."""
+        # Create tables and add sample data
+        db.create_all()
+        example_data()
 
-#         result = self.client.get("/important", follow_redirects=True)
-#         self.assertNotIn(b"You are a valued user", result.data)
-#         self.assertIn(b"You must be logged in", result.data)
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.remove()
+        db.drop_all()
+        db.engine.dispose()
+
+    def test_progress_page(self):
+        """Test that user can't see progress page when logged out."""
+
+        result = self.client.get("/progress", follow_redirects=True)
+        self.assertNotIn(b"Overview", result.data)
+        self.assertIn(b"This Time Let's Make It STICK", result.data)
 
 
 # class FlaskTestsLogInLogOut(TestCase):  # Bonus example. Not in lecture.
