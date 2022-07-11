@@ -13,7 +13,6 @@ app = Flask(__name__)
 app.secret_key = os.environ['secret_key']
 app.jinja_env.undefined = StrictUndefined
 
-
 CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
 CLOUDINARY_SECRET = os.environ['CLOUDINARY_SECRET']
 CLOUD_NAME = "habittracking"
@@ -54,7 +53,6 @@ def login():
         session["user_email"] = user.email
 
         # Check for missed entries
-        user = User.get_by_email(session["user_email"])
         habits = user.habits
 
         missed_entries = ""
@@ -127,10 +125,9 @@ def view_progress():
     if user:
 
         habits = user.habits
-
-        badges = Badge.query.filter(
-            Badge.user_id == user.user_id).order_by(Badge.img_url).all()
-
+        badges = user.badges
+        badges.sort(key=lambda badge:badge.img_url)
+       
         # Populate event list from the records for calendar
         events = []  
         habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
@@ -148,12 +145,9 @@ def view_progress():
             Habit.update_max_streak(habit.habit_id)
 
         # Populate lists of daily/weekly/monthly habits to update Overview
-        daily_habits = Habit.query.filter(Habit.time_period == "daily",
-                                          Habit.user_id == user.user_id).all()
-        weekly_habits = Habit.query.filter(Habit.time_period == "weekly",
-                                           Habit.user_id == user.user_id).all()
-        monthly_habits = Habit.query.filter(Habit.time_period == "monthly",
-                                            Habit.user_id == user.user_id).all()
+        daily_habits = list(filter(lambda habit: habit.time_period == 'daily', habits))
+        weekly_habits = list(filter(lambda habit: habit.time_period == 'weekly', habits))
+        monthly_habits = list(filter(lambda habit: habit.time_period == 'monthly', habits))
 
         # Get 3 most recent records to update Recent Log
         recent_recs = Record.query.join(Habit).filter(
@@ -174,20 +168,18 @@ def create_habit():
     habit_name = request.form.get("habit_name").capitalize()
     frequency = request.form.get("frequency")
     time_period = request.form.get("time_period")
-    # start_date = datetime.strptime(request.json.get("start_date"),
-    #                                '%Y-%m-%d')
     reminder = request.form.get("reminder")
     current_streak = 0
     max_streak = 0
     user = User.get_by_email(session.get("user_email"))
 
-    # create new habit object in database
+    # Create new habit object in database
     habit = Habit.create(user.user_id, habit_name, frequency,
                          time_period, current_streak, max_streak, reminder)
     db.session.add(habit)
     db.session.commit()
 
-    # Reward badges for creating habits
+    # Activate badges for creating habits
 
     # Check for any existing badge 2 to avoid duplicate
     badge2 = Badge.query.filter(Badge.user_id == user.user_id,
@@ -217,9 +209,8 @@ def create_record():
 
     habit_id = request.form.get("log-habit")
     notes = request.form.get("log-notes")
-    record_date = datetime.strptime(
-        request.form.get("log-date"),
-        '%Y-%m-%d')
+    record_date = datetime.strptime(request.form.get("log-date"),
+                                    '%Y-%m-%d')
     photo = request.files["log-photo"]
     finished = True
 
@@ -232,32 +223,37 @@ def create_record():
         # url for the uploaded image
         img_url = result['secure_url']
     else:
-        rand = random.randint(1,5)
-        img_url = f"static/img/Misc/mountain{rand}.jpg"
+        # rand = random.randint(1,5)
+        # img_url = f"static/img/Misc/mountain{rand}.jpg"
+        img_url = "static/img/Misc/cloud.jpg"
 
     # Create new record object
     record = Record.create(habit_id, finished, notes, img_url, record_date)
     db.session.add(record)
     db.session.commit()
 
-    # Create badges according to number of records
     user = User.get_by_email(session["user_email"])
-    habits = Habit.get_by_user(user.user_id)
+    habits = user.habits
     record_count = 0
+    # Check for any existing badges to avoid duplicate
     badge7 = Badge.query.filter(Badge.user_id == user.user_id,
                                 Badge.img_url == "static/img/Badges_img/7bw.png").first()
     badge8 = Badge.query.filter(Badge.user_id == user.user_id,
                                 Badge.img_url == "static/img/Badges_img/8bw.png").first()
     badge9 = Badge.query.filter(Badge.user_id == user.user_id,
                                 Badge.img_url == "static/img/Badges_img/9bw.png").first()
+   
+   # Create badges according to number of streaks
     for habit in habits:
         record_count += Record.count_records_by_habit(habit.habit_id)
         Habit.update_curr_streak(habit.habit_id)
         Habit.update_max_streak(habit.habit_id)
+
         if habit.max_streak == 7 and badge7:
             badge7.img_url = "static/img/Badges_img/7.png"
             db.session.commit()
             flash("Wonderful! You've reached 7 streaks and earned a badge!")
+
         elif habit.max_streak == 30 and badge8:
             badge7.img_url = "static/img/Badges_img/8.png"
             db.session.commit()
@@ -266,7 +262,7 @@ def create_record():
         elif habit.max_streak == 100 and badge9:
             badge7.img_url = "static/img/Badges_img/9.png"
             db.session.commit()
-            flash("Is that real!? You've reached 100 streaks and earned a badge!")
+            flash("Is this real!? You've reached 100 streaks and earned a badge!")
 
     # Check for any existing badges to avoid duplicate
     badge3 = Badge.query.filter(Badge.user_id == user.user_id,
@@ -299,7 +295,7 @@ def create_record():
 def quick_log():
     habit_id = request.form.get("habit_id")
     record_date = date.today()
-    finished, notes, img_url= True, "", "static/img/Misc/mountain.jpg"
+    finished, notes, img_url= True, "", "static/img/Misc/cloud.jpg"
    
     record = Record.create(habit_id, finished, notes, img_url, record_date)
     db.session.add(record)
@@ -314,8 +310,8 @@ def view_profile():
      
     user = User.get_by_email(session["user_email"])
     habits = user.habits
-    badges = Badge.query.filter(
-        Badge.user_id == user.user_id).order_by(Badge.img_url).all()
+    badges = user.badges
+    badges.sort(key=lambda badge:badge.img_url)
     return render_template("profile.html", user=user, habits=habits, badges=badges)
 
 
@@ -336,9 +332,9 @@ def view_habits():
     """View all records."""
 
     user = User.get_by_email(session["user_email"])
-    habits = Habit.get_by_user(user.user_id)
-    badges = Badge.query.filter(
-        Badge.user_id == user.user_id).order_by(Badge.img_url).all()
+    habits = user.habits
+    badges = user.badges
+    badges.sort(key=lambda badge:badge.img_url)
 
     return render_template("records.html", user=user, habits=habits, badges=badges)
 
@@ -348,7 +344,7 @@ def get_all_habits():
     """Return a list of all habits as JSON."""
 
     user = User.get_by_email(session.get("user_email"))
-    habits = Habit.get_by_user(user.user_id)
+    habits = user.habits
     habits_to_send = []
     for habit in habits:
         habits_to_send.append(
@@ -422,8 +418,13 @@ def get_habit_records(habit_id):
              'img_url': record.img_url,
              'record_date': datetime.strftime(record.record_date, '%Y-%m-%d')})
 
+    if habit.reminder == "":
+        reminder=""
+    else:
+        reminder=f'" {habit.reminder} "'
+
     return jsonify({'records': records_to_send,
-                    'reminder': f"'{habit.reminder}'"})
+                    'reminder': reminder})
 
 
 @app.route("/chart_data.json")
@@ -462,18 +463,12 @@ def get_chart_data():
 
 @app.route("/api/quotes")
 def get_quotes():
-    """Return daily quote from API call."""
-
-    # url = 'https://zenquotes.io/api/random'
-    # headers = {'content-type': 'application/json'}
-    # res_obj = requests.get(url, headers=headers)
-    # quotes = res_obj.json()
+    """Return random quote from API call."""
 
     url = 'https://api.goprogram.ai/inspiration'
     headers = {'content-type': 'application/json'}
     res_obj = requests.get(url, headers=headers)
     quotes = res_obj.json()
-
 
     return jsonify(quotes)
 

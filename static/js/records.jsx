@@ -7,7 +7,7 @@ function Habits(){
     const [records, setRecords] = React.useState([])
     const [reminder, setReminder] = React.useState('')
 
-    // fetch data from backend then update habits using setHabits
+    // fetch data from backend then update habits/records using setHabits/setRecords
     React.useEffect(()=>{
         fetch('/habits.json')
             .then((response)=>response.json())
@@ -66,7 +66,7 @@ function Habits(){
         };
     }
    
-    // loop thru the records state and create record component
+    // loop through the records state and create record component
     const recordList = []
 
     for (const record of records){
@@ -80,9 +80,6 @@ function Habits(){
             img_url = {record.img_url}
             removeRecord = {removeRecord}
             />,
-            // <button className="btn btn-light" onClick={()=>removeRecord(record.record_id)}> 
-            // <img src="static/img/trash.svg" alt="trash">
-            // </img></button>
         )
     }
     
@@ -137,7 +134,5 @@ function Record(props){
     );
 }
    
-
-ReactDOM.render(
-    <Habits />, 
-    document.querySelector('#root'));
+ReactDOM.render(<Habits />, 
+                document.querySelector('#root'));

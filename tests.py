@@ -20,19 +20,21 @@ class FlaskTestsBasic(TestCase):
         """Test homepage page."""
 
         result = self.client.get("/")
-        self.assertIn(b"Let's Make It STICK", result.data)
+        self.assertIn(b"Log in", result.data)
 
 
-class FlaskTestsDatabase(TestCase):
-    """Flask tests that use the database."""
+
+
+class FlaskTestsLoggedIn(TestCase):
+    """Flask tests that use the database.."""
 
     def setUp(self):
         """Stuff to do before every test."""
 
-        # Get the Flask test client
         self.client = app.test_client()
         app.config['TESTING'] = True
-
+        app.config['SECRET_KEY'] = 'key'
+        
         # Connect to test database
         connect_to_db(app, "postgresql:///testdb")
 
@@ -40,87 +42,59 @@ class FlaskTestsDatabase(TestCase):
         db.create_all()
         example_data()
 
-    def tearDown(self):
-        """Do at end of every test."""
-
-        db.session.remove()
-        db.drop_all()
-        db.engine.dispose()
-
-    def test_login(self):
-        """Test login page."""
-
-        result = self.client.post("/login",
-                                  data={"email": "jane@doe.com", "password": "test123"},
-                                  follow_redirects=True)
-        self.assertIn(b"Overview", result.data)
-
-
-class FlaskTestsLoggedIn(TestCase):
-    """Flask tests with user logged in to session."""
-
-    def setUp(self):
-        """Stuff to do before every test."""
-
-        app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'key'
-        self.client = app.test_client()
-        
-                # Connect to test database
-        connect_to_db(app, "postgresql:///testdb")
-
-        # Create tables and add sample data
-        db.create_all()
-        example_data()
-
-        # simulate user logging in 
+        # Simulate user logging in 
         with self.client as c:
             with c.session_transaction() as sess:
                 sess['user_email'] = 'jane@doe.com'
 
 
-    def tearDown(self):
-        """Do at end of every test."""
+    def test_login(self):
+        """Test login page."""
 
-        db.session.remove()
-        db.drop_all()
-        db.engine.dispose()
-
-    def test_progress_page(self):
-        """Test profile page."""
-
-        result = self.client.get("/progress")
+        result = self.client.post("/login",
+                                  data={"email": "jane@doe.com", 
+                                        "password": "test123"},
+                                        follow_redirects=True)
         self.assertIn(b"Overview", result.data)
-
-
-class FlaskTestsLoggedOut(TestCase):
-    """Flask tests with user logged in to session."""
-
-    def setUp(self):
-        """Stuff to do before every test."""
-
-        app.config['TESTING'] = True
-        self.client = app.test_client()
-        # Connect to test database
-        connect_to_db(app, "postgresql:///testdb")
-
-        # Create tables and add sample data
-        db.create_all()
-        example_data()
-
-    def tearDown(self):
-        """Do at end of every test."""
-
-        db.session.remove()
-        db.drop_all()
-        db.engine.dispose()
+        self.assertNotIn(b"Log in", result.data)
 
     def test_progress_page(self):
-        """Test that user can't see progress page when logged out."""
+        """Test that user can progress page when logged in."""
 
         result = self.client.get("/progress", follow_redirects=True)
+        self.assertIn(b"Overview", result.data)
+        self.assertNotIn(b"This Time Let's Make It STICK", result.data)
+
+    def test_progress_page(self):
+        """Test that user can progress page when logged in."""
+
+        result = self.client.get("/progress", follow_redirects=True)
+        self.assertIn(b"Overview", result.data)
+        self.assertNotIn(b"This Time Let's Make It STICK", result.data)
+
+    def test_manage_page(self):
+        """Test that user can profile page when logged in."""
+
+        result = self.client.get("/manage", follow_redirects=True)
+        self.assertIn(b"jane@doe.com", result.data)
         self.assertNotIn(b"Overview", result.data)
-        self.assertIn(b"This Time Let's Make It STICK", result.data)
+
+    def test_logout_page(self):
+        """Test profile page."""
+
+        result = self.client.get("/logout", follow_redirects=True)
+        self.assertIn(b"Log in", result.data)
+        self.assertNotIn(b"Overview", result.data)
+
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.remove()
+        db.drop_all()
+        db.engine.dispose()
+
+
 
 
 # class FlaskTestsLogInLogOut(TestCase):  # Bonus example. Not in lecture.
