@@ -1,6 +1,7 @@
 
 ## 📝 STICK
-A habit tracking app
+
+A habit-tracking web application for managing habits, creating journals and promoting habit building by visualizing results with calendar, streak data and charts.
 
 ## Table of Contents
 - 🤖 Technologies
