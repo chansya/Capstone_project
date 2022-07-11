@@ -104,3 +104,16 @@ window.onload = (event) => {
     })
   };
 
+
+
+//   show part of record notes and add read more button
+
+// const notes = document.querySelectorAll('.rec-note');
+
+// for(const note of notes){
+// let part1 = note.innerHTML.slice(0,100);
+
+// let part2 = note.innerHTML.slice(100);
+
+// note.innerHTML=part1;
+// }
