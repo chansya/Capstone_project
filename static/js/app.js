@@ -16,10 +16,14 @@ logDate.max = new Date().toLocaleDateString('en-ca')
 fetch('/chart_data.json')
     .then((response) => response.json())
     .then((responseJson) => {
-
+        console.log('Json response:')
+        console.log(responseJson)
         // create an array of objects with habit name as key and list of records as value
+        let habit_recs = Object.entries(responseJson['habits'])
+        let color_dict = responseJson['colors']
+        console.log(color_dict)
         let dataArr = [];
-        for(const [habit_name, daily_records] of Object.entries(responseJson)){
+        for(const [habit_name, daily_records] of habit_recs){
 
             const data = daily_records.map((dailyTotal) => ({
                 x: dailyTotal.date,
@@ -32,16 +36,14 @@ fetch('/chart_data.json')
         }
         // create array of datasets 
         let dataSet=[];
-        let colors = ['#c5dedd','#bcd4e6','#fad2e1','#eddcd2','#cddafd',
-        '#f0efeb','#dbe7e4','#d6e2e9','#fde2e4','#dfe7fd'];
 
         for(let i=0; i<dataArr.length; i++){
             let name = Object.keys(dataArr[i])[0]
             let data = dataArr[i][name]
             dataSet.push({
                 label: name,
-                backgroundColor: colors[i],
-                borderColor: colors[i],
+                backgroundColor: color_dict[name],
+                borderColor: color_dict[name],
                 data: data
             })
         }
@@ -96,7 +98,6 @@ window.onload = (event) => {
     fetch('/api/quotes')
     .then((response) => response.json())
     .then((quoteData) => {
-        console.log(quoteData)
         let quote= quoteData['quote'];
         let author = quoteData['author'];
         document.querySelector('#quote')

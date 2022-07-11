@@ -1,4 +1,5 @@
 
+from turtle import color
 from flask import Flask, jsonify, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, date
@@ -125,6 +126,8 @@ def view_progress():
     if user:
 
         habits = user.habits
+        habits.sort(key=lambda habit:habit.habit_id)
+
         badges = user.badges
         badges.sort(key=lambda badge:badge.img_url)
        
@@ -433,11 +436,17 @@ def get_chart_data():
 
     user = User.get_by_email(session.get("user_email"))
     habits = user.habits
+    habits.sort(key=lambda habit:habit.habit_id)
+    
+    habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
+                    '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
+    
     
     # make a dictionary with habit name as key and record data list as value
     habit_dict = {}
+    color_dict = {}
 
-    for habit in habits:
+    for i, habit in enumerate(habits):
 
         record_list = []
         counted_days = []
@@ -457,8 +466,13 @@ def get_chart_data():
                 counted_days.append(record.record_date)
 
         habit_dict[habit.habit_name] = record_list
+        color_dict[habit.habit_name] = habit_colors[i]
+        
 
-    return jsonify(habit_dict)
+    print(habit_dict)
+    print(color_dict)
+    return jsonify({'habits':habit_dict,
+                    'colors': color_dict})
 
 
 @app.route("/api/quotes")
