@@ -16,12 +16,11 @@ logDate.max = new Date().toLocaleDateString('en-ca')
 fetch('/chart_data.json')
     .then((response) => response.json())
     .then((responseJson) => {
-        console.log('Json response:')
-        console.log(responseJson)
-        // create an array of objects with habit name as key and list of records as value
+        
         let habit_recs = Object.entries(responseJson['habits'])
         let color_dict = responseJson['colors']
-        console.log(color_dict)
+
+        // create an array of objects with habit name as key and list of records as value
         let dataArr = [];
         for(const [habit_name, daily_records] of habit_recs){
 
@@ -105,16 +104,3 @@ window.onload = (event) => {
     })
   };
 
-
-
-//   show part of record notes and add read more button
-
-// const notes = document.querySelectorAll('.rec-note');
-
-// for(const note of notes){
-// let part1 = note.innerHTML.slice(0,100);
-
-// let part2 = note.innerHTML.slice(100);
-
-// note.innerHTML=part1;
-// }

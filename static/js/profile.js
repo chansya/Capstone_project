@@ -63,7 +63,6 @@ saveBtn.addEventListener('click', (evt)=>{
         const formInput = {
             new_pw: password,
         };
-        console.log(formInput)
         fetch('/change_pw', {
             method: 'POST',
             body: JSON.stringify(formInput),

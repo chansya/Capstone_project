@@ -1,9 +1,7 @@
 
-from turtle import color
 from flask import Flask, jsonify, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Habit, Record, Badge
 from datetime import datetime, date
-import random
 import os
 import requests
 from passlib.hash import argon2
