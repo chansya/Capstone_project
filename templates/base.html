@@ -8,20 +8,18 @@
         {% block title %}{% endblock %}
     </title>
     
-    <!-- Bootstrap & Icon -->
+    <!-- Bootstrap & Bootstrap Icon -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-    <!-- Google font -->
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Peta:wght@500;600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
-
-    <!-- Own stylesheet -->
+    <!-- Custom stylesheet -->
     <link rel="stylesheet" href="static/css/style.css">
-    <!-- favicon -->
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="static/img/Misc/stickies.svg">
 
-    
     {% block head %}{% endblock %}
    
 </head>
@@ -40,8 +38,8 @@
                     <!-- <a href="/" class="nav-item nav-link active">Home</a> -->
                 </div>
                 <div class="navbar-nav ms-auto me-5">
-                    <a href="/login" class="nav-item nav-link index"><i class="bi bi-box-arrow-in-right"></i>&nbsp;Log in</a>
-                    <a href="/signup" class="nav-item nav-link index"><i class="bi bi-person-plus"></i>&nbsp;Sign up</a>
+                    <a href="/login" class="nav-item nav-link draw-line"><i class="bi bi-box-arrow-in-right"></i>&nbsp;Log in</a>
+                    <a href="/signup" class="nav-item nav-link draw-line"><i class="bi bi-person-plus"></i>&nbsp;Sign up</a>
                 </div>
             </div>
         </div>
@@ -60,10 +58,7 @@
               <!-- Modal form for new habit -->
               <li class="nav-item">
                 <!-- Button triggers the modal -->
-                  <button type="button" class="btn btn-light index" data-bs-toggle="modal" data-bs-target="#add_habit">
-                    <i class="bi bi-plus-square"></i> New Habit
-                  </button>
-    
+                <a class="nav-link draw-line" href="#add_habit" data-bs-toggle="modal" data-bs-target="#add_habit"><i class="bi bi-plus-square"></i> New Habit</a>    
                   <!-- Habit Modal -->
                 <div class="modal fade" id="add_habit" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
                   <div class="modal-dialog">
@@ -113,7 +108,8 @@
               <!-- Modal form for record-->
               <li class="nav-item">
                 <!-- Button triggers the modal -->
-                <button class="btn btn-light index" data-bs-toggle="modal" data-bs-target="#rec_modal"><i class="bi bi-pencil"></i> Log</button>
+                <a class="nav-link draw-line" href="#rec_modal" data-bs-toggle="modal" data-bs-target="#rec_modal"><i class="bi bi-pencil"></i> Log</a>
+
                 <!-- Record Modal -->
                 <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
                   <div class="modal-dialog">
