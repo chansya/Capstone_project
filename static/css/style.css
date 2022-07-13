@@ -1,19 +1,17 @@
 body{
     font-family: 'Montserrat', sans-serif;
+    background-image: url('https://www.niaid.nih.gov/themes/custom/niaid-drupal-theme/patternlab/src/images/waves.svg');
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-nav{
-
-    background: #E0EAFC;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #edf2fb, #ccdbfd);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #edf2fb, #ccdbfd); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-}
 
 #logo{
     width: 3rem;
     height: 3rem;
 }
+
 #slogan{
     display: flex;
     justify-content: center;
@@ -31,9 +29,6 @@ nav{
     display: none;
 }
 
-#pw-success{
-    color: olivedrab;
-}
 
 .card-img-top {
     width: 100%;
@@ -46,10 +41,18 @@ nav{
 }
 
 
+#footer-logo, .bi, a, #pw-success{
+    color:#3e8cb4;
+}
+
 .navbar-brand{
     font-family: 'Lexend Peta', sans-serif;
     font-size: 30px;
     font-weight: 600;
+    color: #3e8cb4;
+}
+.navbar-brand:hover{
+    color: #3e8cb4;
 }
 
 .draw-line {
@@ -108,4 +111,7 @@ button#overview-header {
     background-color: white;
 }
 
+.bi-check-circle{
+    color:#088b6f;
+}
 
