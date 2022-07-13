@@ -131,8 +131,10 @@ def view_progress():
        
         # Populate event list from the records for calendar
         events = []  
-        habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
+        habit_colors = ['#758bfd', '#17c3b2', '#ee964b', '#eddcd2', '#cddafd',
                         '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
+        # habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
+        #                 '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
         for i, habit in enumerate(habits):
             records = Record.get_by_habit(habit.habit_id)
             for record in records:
@@ -436,7 +438,7 @@ def get_chart_data():
     habits = user.habits
     habits.sort(key=lambda habit:habit.habit_id)
     
-    habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
+    habit_colors = ['#758bfd', '#17c3b2', '#ee964b', '#eddcd2', '#cddafd',
                     '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
     
     

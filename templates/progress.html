@@ -19,7 +19,7 @@
   
   <div class="row">
     <!-- Calendar -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 mb-3">
       <div id="calendar"></div>
     </div>
     
@@ -54,7 +54,7 @@
                     <td></td>
                   </tr>
                   {% for habit in daily_habits %}
-                    <tr>
+                    <tr class="habit-row">
                       <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per day">{{habit.habit_name}}</th>
                       {% if habit.current_streak == 0 %}
                       <td><img src="static/img/Misc/fire_bw.png" alt="fire-bw">&nbsp;{{ habit.current_streak }}</td>
@@ -84,7 +84,7 @@
                       <td></td>
                     </tr>
                     {% for habit in weekly_habits %}
-                      <tr>
+                      <tr class="habit-row">
                         <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per week">{{habit.habit_name}}</th>
                         {% if habit.current_streak == 0 %}
                         <td><img src="static/img/Misc/fire_bw.png" alt="fire-bw">&nbsp;{{ habit.current_streak }}</td>
@@ -114,7 +114,7 @@
                       <td></td>
                     </tr>
                     {% for habit in monthly_habits %}
-                      <tr>
+                      <tr class="habit-row">
                         <th scope="row" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ habit.frequency }} per month">{{habit.habit_name}}</th>
                         {% if habit.current_streak == 0 %}
                         <td><img src="static/img/Misc/fire_bw.png" alt="fire-bw">&nbsp;{{ habit.current_streak }}</td>
@@ -212,8 +212,6 @@
     
   </div>
   
-
-
 </div>
 {% endblock %}
 
@@ -233,7 +231,8 @@
           id: '{{ event.id }}',
           title: '{{ event.title }}',
           start: '{{ event.start }}',
-          color: '{{ event.color }}'
+          color: '{{ event.color }}',
+          
         },
         {% endfor %}    
       ],

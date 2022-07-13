@@ -1,8 +1,13 @@
 body{
     font-family: 'Montserrat', sans-serif;
-    /* background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%); */
-    /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
-    /* background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%); */
+}
+
+nav{
+
+    background: #E0EAFC;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #edf2fb, #ccdbfd);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #edf2fb, #ccdbfd); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 
 #logo{
@@ -76,7 +81,6 @@ body{
     font-family: 'Lexend Peta', sans-serif;
 }
 
-
 button#overview-header {
     background-color: #ccdbfd;
 }   
@@ -90,4 +94,18 @@ button#overview-header {
 #quote-header{
     background-color: #edf2fb;
 }
+
+#navbarDropdown{
+    font-size: large;
+    color: black;
+}
+
+.habit-row td{
+    text-align: center;
+}
+
+.fc-view-harness{
+    background-color: white;
+}
+
 

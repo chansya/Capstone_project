@@ -49,7 +49,7 @@
     
     {% else %}
     <!-- nav after log in -->
-    <nav class="navbar navbar-expand-md">
+    <nav class="navbar navbar-expand-md ">
         <div class="container-fluid">
           <a class="navbar-brand ms-sm-5" href="/progress"><i class="bi bi-stickies"></i> STICK</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
               <!-- Modal form for new habit -->
               <li class="nav-item">
                 <!-- Button triggers the modal -->
-                  <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#add_habit">
+                  <button type="button" class="btn btn-light index" data-bs-toggle="modal" data-bs-target="#add_habit">
                     <i class="bi bi-plus-square"></i> New Habit
                   </button>
     
@@ -113,7 +113,7 @@
               <!-- Modal form for record-->
               <li class="nav-item">
                 <!-- Button triggers the modal -->
-                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#rec_modal"><i class="bi bi-pencil"></i> Log</button>
+                <button class="btn btn-light index" data-bs-toggle="modal" data-bs-target="#rec_modal"><i class="bi bi-pencil"></i> Log</button>
                 <!-- Record Modal -->
                 <div class="modal fade" id="rec_modal" tabindex="-1"  aria-labelledby="Log your habit" aria-hidden="true" role="dialog">
                   <div class="modal-dialog">
