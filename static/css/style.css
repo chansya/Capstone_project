@@ -121,7 +121,6 @@ button#overview-header {
 }
 
 #signup-img{
-    display: flex;
     max-height: 80%;
-    justify-content: center;
 }
+
