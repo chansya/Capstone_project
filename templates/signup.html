@@ -4,13 +4,10 @@
 {% block body %}
 
 
-<div class="container mt-4 mb-auto">
+<main class="container mt-4 mb-auto">
     <div class="row"> 
-        <div class="col-sm-7">
-            <img class="img-fluid" src="static/img/Misc/hiking2.jpg" alt="">
-
-        </div>
-        <div class="col-sm-5">
+        <!-- sign up form -->
+        <div class="col-md-6">
             <h4>Create an account</h4>
             <form action="/signup" method="POST">
                 <div class="mb-3">
@@ -42,9 +39,15 @@
                 <p>Already a user? <a href="/login">Log in here.</a></p>
             </div>
         </div>
+        <!-- sign up img -->
+        <div class="col-md-6 me-auto d-flex justify-content-center">
+            <img class="img-fluid d-none d-md-block" src="static/img/Misc/hiking3.jpeg" alt="signup"
+            id="signup-img">
+        </div>
+        
         
     </div>
-</div>
+</main>
 
 {% endblock %}
 

@@ -115,6 +115,13 @@ button#overview-header {
     color:#088b6f;
 }
 
-/* .rec-head{
-    font-weight: 400;
-} */
+.back-to-top{
+    display: flex;
+    justify-content: end;
+}
+
+#signup-img{
+    display: flex;
+    max-height: 80%;
+    justify-content: center;
+}
