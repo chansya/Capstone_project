@@ -110,7 +110,7 @@ def signup():
             badge1.img_url = "static/img/Badges_img/1.png"
             db.session.commit()
             flash(
-                "Yay! You've earned a badge for creating an account! Check it out under your profile.")
+                "Welcome! You've earned a badge for creating an account! Check it out under your profile.")
             return redirect("/progress")
 
     return render_template('signup.html')
@@ -469,8 +469,6 @@ def get_chart_data():
         color_dict[habit.habit_name] = habit_colors[i]
         
 
-    print(habit_dict)
-    print(color_dict)
     return jsonify({'habits':habit_dict,
                     'colors': color_dict})
 

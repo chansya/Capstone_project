@@ -65,7 +65,7 @@ fetch('/chart_data.json')
                 time: {
                 
                 tooltipFormat: 'LLLL dd', // Luxon format string
-                unit: 'day',
+                unit: 'week',
                 },
             },
             y: {

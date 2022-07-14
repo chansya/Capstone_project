@@ -89,7 +89,7 @@ function Habits(){
             <section className ="py-2 text-center container">
                 <div className ="row py-lg-4">
                     <div className ="col-lg-6 col-md-8 mx-auto">
-                        <h1 className ="fw-light">MY RECORDS</h1>
+                        <h1 className ="rec-head">MY RECORDS</h1>
                         <p className ="lead text-muted"></p>
                         <span>       
                         <button className="btn btn-light" onClick={()=>updateRecords('all')}>All</button>&nbsp;    
