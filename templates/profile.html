@@ -7,7 +7,7 @@
 
 
 {% block body %}
-<div class="col-lg-8 mx-auto p-3 py-md-5 mb-auto">
+<main class="col-lg-8 mx-auto p-3 py-md-5 mb-auto">
     <header class="d-flex align-items-center pb-3 mb-3 border-bottom">
       <h3 class="d-flex align-items-center text-dark text-decoration-none">
         <i class="bi bi-person-lines-fill" style="font-size: 1.75rem;"></i>
@@ -15,49 +15,47 @@
       </h3>
     </header>
   
-    <main>
-      
-      <div class="row g-5">
-        <div class="col-md-6">
-          <h5 class="">My Details</h5>
-          <hr>
-          <ul class="icon-list ps-0">
-            
-            <li class="d-flex align-items-start mb-1">Name:&nbsp;{{ user.name }}</li>
-            <li class="d-flex align-items-start mb-1">Email:&nbsp;{{ user.email }}</li>
-            <li class="d-flex align-items-start mb-1" id="pw-btn-li">
-                <button class="btn btn-light" id="pw-btn">Change password</button>
-            </li>
-            <li class="d-flex align-items-start mb-1" >
-                <form action="/change_pw" method="POST" id="change-pw-form">
-                    <label for="new_pw" class="form-label">New password: </label>
-                    <input type="password" name="new_pw" id="new_pw" class="form-control">
-                    <label for="cfm_pw" class="form-label">Confirm password: </label>
-                    <input type="password" name="cfm_pw" id="cfm_pw" class="form-control mb-3">
-                    <button type="button" class="btn btn-light" id="cancel-pw">Cancel</button>
-                    <button type="submit" class="btn btn-secondary" id="save-pw">Save</button>
-                </form>
-            </li>
-          </ul>
-        </div>
-  
-        <div class="col-md-6">
-          <h5>My Habits <sup id="edit-habits"><i class="bi bi-pencil-square"></i></sup></h5>
-          <hr>
-          <ul class="icon-list ps-0">
-            {% for habit in habits %}
-            <li class="d-flex align-items-start mb-1 habit-item" id="{{ habit.habit_id }}">
-                {{ habit.habit_name }}&nbsp;
-                <span class="rm-habit"><i class="bi bi-x-square"></i></span>                
-                </button>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+    <section class="row g-5">
+      <!-- My Details -->
+      <div class="col-md-6">
+        <h5 class="">My Details</h5>
+        <hr>
+        <ul class="icon-list ps-0">
+          
+          <li class="d-flex align-items-start mb-1">Name:&nbsp;{{ user.name }}</li>
+          <li class="d-flex align-items-start mb-1">Email:&nbsp;{{ user.email }}</li>
+          <li class="d-flex align-items-start mb-1" id="pw-btn-li">
+              <button class="btn btn-light" id="pw-btn">Change password</button>
+          </li>
+          <li class="d-flex align-items-start mb-1" >
+              <form action="/change_pw" method="POST" id="change-pw-form">
+                  <label for="new_pw" class="form-label">New password: </label>
+                  <input type="password" name="new_pw" id="new_pw" class="form-control">
+                  <label for="cfm_pw" class="form-label">Confirm password: </label>
+                  <input type="password" name="cfm_pw" id="cfm_pw" class="form-control mb-3">
+                  <button type="button" class="btn btn-light" id="cancel-pw">Cancel</button>
+                  <button type="submit" class="btn btn-secondary" id="save-pw">Save</button>
+              </form>
+          </li>
+        </ul>
       </div>
-    </main>
-    
-  </div>
+      <!-- My Habits -->
+      <div class="col-md-6">
+        <h5>My Habits <sup id="edit-habits"><i class="bi bi-pencil-square"></i></sup></h5>
+        <hr>
+        <ul class="icon-list ps-0">
+          {% for habit in habits %}
+          <li class="d-flex align-items-start mb-1 habit-item" id="{{ habit.habit_id }}">
+              {{ habit.habit_name }}&nbsp;
+              <span class="rm-habit"><i class="bi bi-x-square"></i></span>                
+              </button>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+  </main>
 
 
 {% endblock %}

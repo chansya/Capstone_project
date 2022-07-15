@@ -15,15 +15,16 @@
 {% endblock %}
 
 {% block body %}
-<div class="container pt-3">
-  
+<main class="container pt-3">
   <div class="row">
     <!-- Calendar -->
-    <div class="col-lg-6 mb-3">
+    <section class="col-lg-6 mb-3">
       <div id="calendar"></div>
-    </div>
-    
-    <div class="accordion col-lg-6">
+    </section>
+
+    <!-- Accodian  -->
+    <section class="accordion col-lg-6">
+      <!-- Overview -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
           <button class="accordion-button" id="overview-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -144,6 +145,7 @@
           </div>
         </div>
       </div>
+      <!-- Chart -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo">
           <button class="accordion-button collapsed" id="chart-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -158,6 +160,7 @@
           </div>
         </div>
       </div>
+      <!-- Recent Logs -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingThree">
           <button class="accordion-button collapsed" id="log-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -194,6 +197,7 @@
           </div>
         </div>
       </div>
+      <!-- Quote -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingFour">
           <button class="accordion-button collapsed" id="quote-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
@@ -208,16 +212,14 @@
           </div>
         </div>
       </div>
-    </div>
-    
+    </section>
   </div>
-  
-</div>
+</main>
 {% endblock %}
 
 
 {% block after_body %}
-<!-- JS script for bootstrap 5 and render calendar with records -->
+<!-- JS script for fullCalendar-->
 <script>
   let recModal = new bootstrap.Modal(document.getElementById('rec_modal'))
 

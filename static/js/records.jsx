@@ -85,8 +85,8 @@ function Habits(){
     
     return (
         <React.Fragment>
-            {/* TOP section */}
-            <section className ="py-2 text-center container">
+            {/* Heading section */}
+            <header className ="py-2 text-center container">
                 <div className ="row py-lg-4">
                     <div className ="col-lg-6 col-md-8 mx-auto">
                         <h1 className ="rec-head">MY RECORDS</h1>
@@ -99,14 +99,14 @@ function Habits(){
                     {/* personal reminder component */}
                     <div class="mt-4">{reminder}</div>
                 </div>
-            </section>
+            </header>
 
             {/* RECORDS SECTION */}
-            <div className="container">
+            <section className="container">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">               
                     {recordList}
                 </div>
-            </div>
+            </section>
         </React.Fragment>
         );
 }
@@ -114,23 +114,23 @@ function Habits(){
 // Single record component
 function Record(props){
     return (
-        <div className="col">
+        <article className="col">
             <div className="card shadow-sm">
                 <img src={props.img_url} className="card-img-top img-fluid" alt="record-image"/>
                 <div className="card-body">
-                <h6 class="card-title">{props.habit_name}</h6>
-                <p className="card-text">{props.notes}</p>
-                <div className="d-flex justify-content-between align-items-center">
-                    <div className="btn-group">
-                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => { props.removeRecord(props.record_id) }}>
-                        <small>Remove</small>
-                    </button>
-                    </div>
-                    <small className="text-muted">{props.record_date}</small>
+                    <h6 class="card-title">{props.habit_name}</h6>
+                    <p className="card-text">{props.notes}</p>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <div className="btn-group">
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => { props.removeRecord(props.record_id) }}>
+                            <small>Remove</small>
+                        </button>
+                        </div>
+                        <small className="text-muted">{props.record_date}</small>
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
     );
 }
    
