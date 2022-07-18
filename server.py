@@ -133,8 +133,7 @@ def view_progress():
         events = []  
         habit_colors = ['#758bfd', '#17c3b2', '#ee964b', '#eddcd2', '#cddafd',
                         '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
-        # habit_colors = ['#c5dedd', '#bcd4e6', '#fad2e1', '#eddcd2', '#cddafd',
-        #                 '#f0efeb', '#dbe7e4', '#d6e2e9', '#fde2e4', '#dfe7fd']
+
         for i, habit in enumerate(habits):
             records = Record.get_by_habit(habit.habit_id)
             for record in records:
@@ -212,7 +211,10 @@ def create_record():
 
     habit_id = request.form.get("log-habit")
     notes = request.form.get("log-notes")
-    record_date = datetime.strptime(request.form.get("log-date"),
+    if request.form.get("log-date") == "today":
+        record_date = date.today()
+    else:
+        record_date = datetime.strptime(request.form.get("log-date"),
                                     '%Y-%m-%d')
     photo = request.files["log-photo"]
     finished = True
@@ -226,8 +228,6 @@ def create_record():
         # url for the uploaded image
         img_url = result['secure_url']
     else:
-        # rand = random.randint(1,5)
-        # img_url = f"static/img/Misc/mountain{rand}.jpg"
         img_url = "static/img/Misc/cloud.jpg"
 
     # Create new record object
@@ -274,7 +274,7 @@ def create_record():
                                 Badge.img_url == "static/img/Badges_img/5bw.png").first()
     badge6 = Badge.query.filter(Badge.user_id == user.user_id,
                                 Badge.img_url == "static/img/Badges_img/6bw.png").first()
-
+    print(badge3)
     # Activate badges
     if record_count == 1 and badge3:
         badge3.img_url = "static/img/Badges_img/3.png"
@@ -294,17 +294,17 @@ def create_record():
     return redirect("/progress")
 
 
-@app.route("/quick_log", methods=["POST"])
-def quick_log():
-    habit_id = request.form.get("habit_id")
-    record_date = date.today()
-    finished, notes, img_url= True, "", "static/img/Misc/cloud.jpg"
+# @app.route("/quick_log", methods=["POST"])
+# def quick_log():
+#     habit_id = request.form.get("habit_id")
+#     record_date = date.today()
+#     finished, notes, img_url= True, "", "static/img/Misc/cloud.jpg"
    
-    record = Record.create(habit_id, finished, notes, img_url, record_date)
-    db.session.add(record)
-    db.session.commit()
+#     record = Record.create(habit_id, finished, notes, img_url, record_date)
+#     db.session.add(record)
+#     db.session.commit()
 
-    return redirect("/progress")
+#     return redirect("/progress")
 
 
 @app.route("/manage")
