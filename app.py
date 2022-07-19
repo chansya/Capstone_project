@@ -8,8 +8,10 @@ from passlib.hash import argon2
 import cloudinary.uploader
 from jinja2 import StrictUndefined
 
+
 app = Flask(__name__)
-app.secret_key = os.environ['secret_key']
+# app.secret_key = os.environ['secret_key']
+app.secret_key = 'secretkey'
 app.jinja_env.undefined = StrictUndefined
 
 CLOUDINARY_KEY = os.environ['CLOUDINARY_KEY']
