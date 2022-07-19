@@ -4,7 +4,7 @@ from email import message
 import os
 from datetime import datetime
 from model import User, Habit, Record, Badge, connect_to_db, db
-from app import app
+from server import app
 
 
 os.system("dropdb habits")

@@ -509,8 +509,7 @@ def example_data():
     db.session.add_all([jane,john, habit1,record1, badge1])
     db.session.commit()
 
-# def connect_to_db(app, db_uri="postgresql:///habits", echo=False):
-def connect_to_db(app, db_uri="postgres://bztneeuqsvcoxt:8d95a23935f341932b7c1990b89c5858474dbdcbbb89b99496c96374c9b604de@ec2-34-235-198-25.compute-1.amazonaws.com:5432/d2769ld0lqj2hi", echo=False):
+def connect_to_db(app, db_uri="postgresql:///habits", echo=False):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     app.config["SQLALCHEMY_ECHO"] = echo
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -523,6 +522,6 @@ def connect_to_db(app, db_uri="postgres://bztneeuqsvcoxt:8d95a23935f341932b7c199
 
 if __name__ == "__main__":
 
-    from app import app
+    from server import app
 
     connect_to_db(app)
