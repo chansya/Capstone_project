@@ -218,6 +218,7 @@ def create_record():
         record_date = datetime.strptime(request.form.get("log-date"),
                                     '%Y-%m-%d')
     photo = request.files["log-photo"]
+    
     finished = True
 
     if photo:
@@ -236,76 +237,24 @@ def create_record():
     db.session.add(record)
     db.session.commit()
 
-    user = User.get_by_email(session["user_email"])
-    habits = user.habits
-    record_count = 0
-    # Check for any existing badges to avoid duplicate
-    badge7 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/7bw.png").first()
-    badge8 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/8bw.png").first()
-    badge9 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/9bw.png").first()
-   
-   # Create badges according to number of streaks
-    for habit in habits:
-        record_count += Record.count_records_by_habit(habit.habit_id)
-        Habit.update_curr_streak(habit.habit_id)
-        Habit.update_max_streak(habit.habit_id)
-
-        if habit.max_streak == 7 and badge7:
-            badge7.img_url = "static/img/Badges_img/7.png"
-            db.session.commit()
-            flash("Wonderful! You've reached 7 streaks and earned a badge!")
-
-        elif habit.max_streak == 30 and badge8:
-            badge7.img_url = "static/img/Badges_img/8.png"
-            db.session.commit()
-            flash("Dope! You've reached 30 streaks and earned a badge!")
-
-        elif habit.max_streak == 100 and badge9:
-            badge7.img_url = "static/img/Badges_img/9.png"
-            db.session.commit()
-            flash("Is this real!? You've reached 100 streaks and earned a badge!")
-
-    # Check for any existing badges to avoid duplicate
-    badge3 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/3bw.png").first()
-    badge5 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/5bw.png").first()
-    badge6 = Badge.query.filter(Badge.user_id == user.user_id,
-                                Badge.img_url == "static/img/Badges_img/6bw.png").first()
-    print(badge3)
-    # Activate badges
-    if record_count == 1 and badge3:
-        badge3.img_url = "static/img/Badges_img/3.png"
-        db.session.commit()
-        flash("Nice! You've created your first record and earned a badge!")
-
-    if record_count == 5 and badge5:
-        badge5.img_url = "static/img/Badges_img/5.png"
-        db.session.commit()
-        flash("Amazing! You've created your 5 records and earned a badge!")
-
-    if record_count == 10 and badge6:
-        badge6.img_url = "static/img/Badges_img/6.png"
-        db.session.commit()
-        flash("Spectacular! You've created your 10 records and earned a badge!")
-
+    check_badges()
+    
     return redirect("/progress")
 
 
-# @app.route("/quick_log", methods=["POST"])
-# def quick_log():
-#     habit_id = request.form.get("habit_id")
-#     record_date = date.today()
-#     finished, notes, img_url= True, "", "static/img/Misc/cloud.jpg"
+@app.route("/quick_log", methods=["POST"])
+def quick_log():
+    habit_id = request.form.get("habit_id")
+    record_date = date.today()
+    finished, notes, img_url= True, "", "static/img/Misc/cloud.jpg"
    
-#     record = Record.create(habit_id, finished, notes, img_url, record_date)
-#     db.session.add(record)
-#     db.session.commit()
+    record = Record.create(habit_id, finished, notes, img_url, record_date)
+    db.session.add(record)
+    db.session.commit()
 
-#     return redirect("/progress")
+    check_badges()
+
+    return redirect("/progress")
 
 
 @app.route("/manage")
@@ -493,10 +442,68 @@ def process_logout():
     del session["user_email"]
     return redirect("/")
 
+def check_badges():
+
+    user = User.get_by_email(session["user_email"])
+    habits = user.habits
+    record_count = 0
+    # Check for any existing badges to avoid duplicate
+    badge7 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/7bw.png").first()
+    badge8 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/8bw.png").first()
+    badge9 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/9bw.png").first()
+   
+   # Create badges according to number of streaks
+    for habit in habits:
+        record_count += Record.count_records_by_habit(habit.habit_id)
+        Habit.update_curr_streak(habit.habit_id)
+        Habit.update_max_streak(habit.habit_id)
+
+        if habit.max_streak == 7 and badge7:
+            badge7.img_url = "static/img/Badges_img/7.png"
+            db.session.commit()
+            flash("Wonderful! You've reached 7 streaks and earned a badge!")
+
+        elif habit.max_streak == 30 and badge8:
+            badge7.img_url = "static/img/Badges_img/8.png"
+            db.session.commit()
+            flash("Dope! You've reached 30 streaks and earned a badge!")
+
+        elif habit.max_streak == 100 and badge9:
+            badge7.img_url = "static/img/Badges_img/9.png"
+            db.session.commit()
+            flash("Is this real!? You've reached 100 streaks and earned a badge!")
+
+    # Check for any existing badges to avoid duplicate
+    badge3 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/3bw.png").first()
+    badge5 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/5bw.png").first()
+    badge6 = Badge.query.filter(Badge.user_id == user.user_id,
+                                Badge.img_url == "static/img/Badges_img/6bw.png").first()
+    # Activate badges
+    if record_count == 1 and badge3:
+        badge3.img_url = "static/img/Badges_img/3.png"
+        db.session.commit()
+        flash("Nice! You've created your first record and earned a badge!")
+
+    if record_count == 5 and badge5:
+        badge5.img_url = "static/img/Badges_img/5.png"
+        db.session.commit()
+        flash("Amazing! You've created your 5 records and earned a badge!")
+
+    if record_count == 10 and badge6:
+        badge6.img_url = "static/img/Badges_img/6.png"
+        db.session.commit()
+        flash("Spectacular! You've created your 10 records and earned a badge!")
+
+    return 
 
 if __name__ == "__main__":
     connect_to_db(app)
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
 
 
 

@@ -65,10 +65,10 @@
                       <td>{{ habit.max_streak }}</td>
                       <td>{{ habit.records|length }}</td>
                       <td>
-                        <form action="/create_record" method="POST">
+                        <form action="/quick_log" method="POST">
                           <input class="form-control" type="hidden" name="habit_id" value="{{ habit.habit_id }}">
-                          <input class="form-control" type="hidden" name="log-notes" value="">
-                          <input class="form-control" type="hidden" name="log-date" value="today">
+                          <!-- <input class="form-control" type="hidden" name="log-notes" value="">
+                          <input class="form-control" type="hidden" name="log-date" value="today"> -->
                           <button class="btn quick-log" type="submit">
                             <i class="bi bi-check-circle"></i>
                           </button>
@@ -97,10 +97,10 @@
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
                         <td>
-                          <form action="/create_record" method="POST">
+                          <form action="/quick_log" method="POST">
                             <input class="form-control" type="hidden" name="habit_id" value="{{ habit.habit_id }}">
-                            <input class="form-control" type="hidden" name="log-notes" value="">
-                            <input class="form-control" type="hidden" name="log-date" value="today">
+                            <!-- <input class="form-control" type="hidden" name="log-notes" value=""> -->
+                            <!-- <input class="form-control" type="hidden" name="log-date" value="today"> -->
                             <button class="btn quick-log" type="submit">
                               <i class="bi bi-check-circle"></i>
                             </button>
@@ -129,10 +129,10 @@
                         <td>{{ habit.max_streak }}</td>
                         <td>{{ habit.records|length }}</td>
                         <td>
-                          <form action="/create_record" method="POST">
+                          <form action="/quick_log" method="POST">
                             <input class="form-control" type="hidden" name="log-habit" value="{{ habit.habit_id }}">
-                            <input class="form-control" type="hidden" name="log-notes" value="">
-                            <input class="form-control" type="hidden" name="log-date" value="today">
+                            <!-- <input class="form-control" type="hidden" name="log-notes" value=""> -->
+                            <!-- <input class="form-control" type="hidden" name="log-date" value="today"> -->
                             
                             <button class="btn quick-log" type="submit">
                               <i class="bi bi-check-circle"></i>
