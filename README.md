@@ -20,7 +20,7 @@ A habit-tracking web application for managing habits, creating journals and prom
 
 Screenshots and video walk-through will be available soon.
 
-![homepage](static/img/readme_img/Screen Shot 2022-07-22 at 11.23.16 PM.png "Logo Title Text 1")
+![homepage](static/img/readme_img/homepage.png "Logo Title Text 1")
 
 ## Set Up
 
