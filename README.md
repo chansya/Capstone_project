@@ -20,7 +20,11 @@ A habit-tracking web application for managing habits, creating journals and prom
 
 Screenshots and video walk-through will be available soon.
 
-![homepage](static/img/readme_img/homepage.png "Logo Title Text 1")
+[Video Walkthrough](https://youtu.be/7JZZ1TymbVA "STICK demo video")
+
+![homepage](static/img/readme_img/homepage.png "Homepage")
+![progress](static/img/readme_img/Progess.png "Progress page")
+![badge](static/img/readme_img/Badge.png "Achievement Badges")
 
 ## Set Up
 
